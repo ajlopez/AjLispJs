@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>AjLispcript Test Suite</title>
+	<link rel="stylesheet" href="qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../src/ajlispcript.js"></script>
+	<script type="text/javascript" src="../dependencies/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="qunit.js"></script>
+</head>
+<body>
+	<h1 id="qunit-header">AjLispcript Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup</div>
+<script type="text/javascript">
+	$(function() {
+		test("First Test", function() {
+			same(3-1,2);
+		});
+		
+		test("AjLispcript namespace", function() {
+			notEqual(AjLispcript, undefined);
+		});
+		
+		test("List", function() {
+			var list = new AjLispcript.List(1,2);
+			equals(list.first(), 1);
+			equals(list.rest(), 2);
+			ok(list.isAtom()==false);
+		});
+		
+		test("Object Evaluate", function() {
+			var context = new AjLispcript.Context();
+			var n = 1;
+			equals(n.evaluate(context), 1);
+			var m = 2;
+			equal(m.evaluate(context), 2);
+			equal("foo".evaluate(context), "foo");
+		});
+		
+		test("TopContext", function() {
+			notEqual(AjLispcript.topContext, undefined);
+		});
+		
+		test("Context", function() {
+			var context = new AjLispcript.Context();
+			equal(context.parent(), null);
+			equal(context.getValue("a"), undefined);
+			context.setValue("one", 1);
+			equal(context.getValue("one"), 1);
+		});
+		
+		test("Parent Context", function() {
+			var parent = new AjLispcript.Context();
+			var context = new AjLispcript.Context(parent);
+			equal(context.parent(), parent);
+			equal(parent.parent(), null);
+			equal(context.getValue("a"), undefined);
+			context.setValue("one", 1);
+			equal(context.getValue("one"), 1);
+			parent.setValue("two", 2);
+			equal(context.getValue("two"), 2);
+			context.setValue("two", 3);
+			equal(context.getValue("two"), 3);
+			equal(parent.getValue("two"), 2);
+		});
+		
+		test("Atom", function() {
+			var context = new AjLispcript.Context();
+			context.setValue("one", 1);
+			var one = new AjLispcript.Atom("one");
+			equal(one.evaluate(context), 1);
+			ok(one.isAtom());
+		});
+		
+		test("ListForm simple apply", function() {
+			var list = new AjLispcript.List(AjLispcript.listForm, new AjLispcript.List(1, null));			
+			var result = AjLispcript.listForm.apply(list);			
+			equal(result.first(), 1);
+			equal(result.rest(), null);			
+			var result2 = list.evaluate(null);			
+			equal(result2.first(), 1);
+			equal(result2.rest(), null);
+		});
+		
+		test("FirstForm simple apply", function() {
+			var list = new AjLispcript.List(AjLispcript.firstForm, new AjLispcript.List(1, null));			
+			var result = AjLispcript.firstForm.apply(list);			
+			equal(result, 1);			
+			var result2 = list.evaluate(null);			
+			equal(result2, 1);
+		});
+		
+		test("RestForm simple apply", function() {
+			var list = new AjLispcript.List(AjLispcript.restForm, new AjLispcript.List(1, null));			
+			var result = AjLispcript.restForm.apply(list);			
+			equal(result, null);			
+			var result2 = list.evaluate(null);			
+			equal(result2, null);
+		});
+		
+		test("MakeList", function() {
+			var list = AjLispcript.makeList(1,2,3);
+			
+			equal(list.first(), 1);
+			equal(list.rest().first(), 2);
+			equal(list.rest().rest().first(), 3);
+			equal(list.rest().rest().rest(), null);
+		});
+	});
+</script>
+</body>
+</html>
