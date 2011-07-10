@@ -9,30 +9,48 @@ AjLisp = function() {
 			return rest;
 		}
 		
-		function evaluate(environment) {
-			var form = this.first().evaluate(environment);
-			return form.apply(this);
-		}
-		
-		function evaluateList(environment) {
-			var first = this.first().evaluate(environment);
-			var rest = this.rest();
-			
-			if (rest != null)
-				rest = rest.evaluateList(environment);
-				
-			return new List(first, rest);
-		}
-		
 		this.first = getFirst;
 		this.rest = getRest;
-		this.evaluate = evaluate;
-		this.evaluateList = evaluateList;
-		this.isAtom = function() { return false; }
 	}
 	
 	List.prototype.isAtom = function() { return false; }
 	List.prototype.isList = function() { return true; }
+	List.prototype.evaluate = function(environment) 
+	{
+		var form = this.first().evaluate(environment);
+		return form.apply(this);
+	}	
+	List.prototype.evaluateList = function(environment) 
+	{
+		var first = this.first().evaluate(environment);
+		var rest = this.rest();
+			
+		if (rest != null)
+			rest = rest.evaluateList(environment);
+				
+		return new List(first, rest);
+	}
+	List.prototype.asString = function()
+	{
+		return "(" + this.asRestString();
+	}
+	List.prototype.asRestString = function()
+	{
+		var result = "";
+		var first = this.first();
+		
+		result += asString(first);
+		
+		var rest = this.rest();
+		
+		if (isNil(rest))
+			return result + ")";
+			
+		if (isList(rest))
+			return result + " " + rest.asRestString(rest);
+
+		return result + "." + asString(rest) + ")";
+	}
 	
 	function Atom(name) {
 		function getValue(environment) {
@@ -45,13 +63,17 @@ AjLisp = function() {
 	
 	Atom.prototype.isAtom = function() { return true; }
 	Atom.prototype.isList = function() { return false; }
+	Atom.prototype.asString = function() { return this.name(); }
 	
 	function Form() {
 	}
 	
 	Form.prototype.evaluate = function(environment) { return this; }
 	Form.prototype.apply = function(list, environment) 
-	{ return this.eval(list.rest().evaluateList(environment), environment); }
+	{ 
+		if (isNil(list)) return this.eval(list, environment);
+		return this.eval(list.rest().evaluateList(environment), environment); 
+	}
 	
 	function SpecialForm() {
 	}
@@ -59,6 +81,18 @@ AjLisp = function() {
 	SpecialForm.prototype.evaluate = function(environment) { return this; }
 	SpecialForm.prototype.apply = function(list, environment) 
 	{ return this.eval(list.rest()); }
+	
+	function Closure(argnames, closureenv, body) {
+		body = new List(prognForm, body);
+		
+		this.eval = function(args, environment) {
+			var newenv = makeEnvironment(argnames, args, closureenv);
+			return evaluate(body, newenv);
+		};
+	}
+	
+	Closure.prototype.evaluate = Form.prototype.evaluate;
+	Closure.prototype.apply = Form.prototype.apply;
 		
 	function Environment(parent) {
 		function getParent() {
@@ -97,9 +131,60 @@ AjLisp = function() {
 		return x;
 	}
 	
+	function asString(value)
+	{
+		if (isNil(value)) 
+			return "nil";
+
+		if (isAtom(value))
+			return value.name();
+			
+		if (isList(value))
+			return value.asString();
+			
+		return value+"";
+	}
+	
+	function makeEnvironment(names, values, parent)
+	{
+		var newenv = new Environment(parent);
+		
+		if (isNil(names))
+			return newenv;
+			
+		if (isAtom(names)) 
+		{
+			newenv[names.name()] = values;
+			return newenv;
+		}
+		
+		var name;
+		var value;
+		
+		while (!isNil(names)) 
+		{
+			name = names.first().name();
+			
+			if (isNil(values)) 
+			{
+				newenv[name] = null;
+			}
+			else 
+			{
+				value = values.first();
+				values = values.rest();
+				newenv[name] = value;
+			}
+			
+			names = names.rest();
+		}
+		
+		return newenv;
+	}
+	
 	function isAtom(x) 
 	{
-		if (x == null || x == undefined)
+		if (x == null)
 			return true;
 			
 		if (x.isAtom != undefined && typeof(x.isAtom) == "function")
@@ -197,6 +282,7 @@ AjLisp = function() {
 		List: List,
 		Environment: Environment,
 		Atom: Atom,
+		Closure: Closure,
 		
 		// Functions
 		makeList: makeList,
