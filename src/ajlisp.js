@@ -40,6 +40,7 @@ AjLisp = function() {
 		}
 	
 		this.evaluate = getValue;
+		this.name = function() { return name; };
 	}
 	
 	Atom.prototype.isAtom = function() { return true; }
@@ -50,7 +51,7 @@ AjLisp = function() {
 	
 	Form.prototype.evaluate = function(environment) { return this; }
 	Form.prototype.apply = function(list, environment) 
-	{ return this.eval(list.rest().evaluateList(environment)); }
+	{ return this.eval(list.rest().evaluateList(environment), environment); }
 	
 	function SpecialForm() {
 	}
@@ -85,12 +86,23 @@ AjLisp = function() {
 		this.setValue = setValue;
 	}
 	
+	function evaluate(x, environment)
+	{
+		if (x == null || x == undefined)
+			return x;
+			
+		if (x.evaluate != undefined && typeof(x.evaluate) == "function")
+			return x.evaluate(environment);
+			
+		return x;
+	}
+	
 	function isAtom(x) 
 	{
 		if (x == null || x == undefined)
 			return true;
 			
-		if (x.isAtom != undefined && typeof(x.isAtom)=="function")
+		if (x.isAtom != undefined && typeof(x.isAtom) == "function")
 			return x.isAtom();
 		
 		return false;
@@ -131,13 +143,27 @@ AjLisp = function() {
 	var listForm = new Form();
 	listForm.eval = function eval(list) 
 	{
-			return list;
+		return list;
+	}
+	
+	var prognForm = new SpecialForm();
+	prognForm.eval = function eval(list, environment)
+	{
+		var result = null;
+		
+		while (!isNil(list)) 
+		{
+			result = evaluate(list.first(), environment);
+			list = list.rest();
+		}
+		
+		return result;
 	}
 	
 	var firstForm = new Form();
 	firstForm.eval = function eval(list) 
 	{
-			return list.first();
+		return list.first();
 	}
 	
 	var restForm = new Form();
@@ -145,7 +171,16 @@ AjLisp = function() {
 	{
 			return list.rest();
 	}
-	
+		
+	var defineForm = new SpecialForm()
+	defineForm.eval = function eval(list, env)
+	{
+		var name = list.first().name();
+		var value = evaluate(list.rest().first(), env);
+		environment[name] = value;
+		return value;
+	}
+
 	// Environment
 	
 	var environment = new Environment();
@@ -153,6 +188,9 @@ AjLisp = function() {
 	environment.list = listForm;
 	environment.first = firstForm;
 	environment.rest = restForm;
+	environment.progn = prognForm;
+	
+	environment.define = defineForm;
 	
 	return {
 		// Classes

@@ -116,6 +116,23 @@
 			equal(list.rest().rest().first(), 3);
 			equal(list.rest().rest().rest(), null);
 		});
+		
+		test("Define", function() {
+			var list = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
+			equal(list.evaluate(AjLisp.environment), 1);
+			equal(AjLisp.environment.one, 1);
+		});
+		
+		test("Progn", function() {
+			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
+			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), 2);
+			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), 3);
+			var list = AjLisp.makeList(AjLisp.environment.progn, list1, list2, list3);
+			equal(list.evaluate(AjLisp.environment), 3);
+			equal(AjLisp.environment.one, 1);
+			equal(AjLisp.environment.two, 2);
+			equal(AjLisp.environment.three, 3);
+		});
 	});
 </script>
 </body>
