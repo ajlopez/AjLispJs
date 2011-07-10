@@ -2,14 +2,14 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<title>AjLispcript Test Suite</title>
+	<title>AjLisp Test Suite</title>
 	<link rel="stylesheet" href="qunit.css" type="text/css" media="screen">
-	<script type="text/javascript" src="../src/ajlispcript.js"></script>
+	<script type="text/javascript" src="../src/ajlisp.js"></script>
 	<script type="text/javascript" src="../dependencies/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="qunit.js"></script>
 </head>
 <body>
-	<h1 id="qunit-header">AjLispcript Test Suite</h1>
+	<h1 id="qunit-header">AjLisp Test Suite</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>
@@ -21,64 +21,70 @@
 			same(3-1,2);
 		});
 		
-		test("AjLispcript namespace", function() {
-			notEqual(AjLispcript, undefined);
+		test("AjLisp namespace", function() {
+			notEqual(AjLisp, undefined);
 		});
 		
 		test("List", function() {
-			var list = new AjLispcript.List(1,2);
+			var list = new AjLisp.List(1,2);
 			equals(list.first(), 1);
 			equals(list.rest(), 2);
-			ok(list.isAtom()==false);
+			equal(list.isAtom(),false);
+			equal(list.isList(),true);
+			equal(AjLisp.isAtom(list), false);
+			equal(AjLisp.isList(list), true);
 		});
 		
 		test("Object Evaluate", function() {
-			var context = new AjLispcript.Context();
+			var environment = new AjLisp.Environment();
 			var n = 1;
-			equals(n.evaluate(context), 1);
+			equals(n.evaluate(environment), 1);
 			var m = 2;
-			equal(m.evaluate(context), 2);
-			equal("foo".evaluate(context), "foo");
+			equal(m.evaluate(environment), 2);
+			equal("foo".evaluate(environment), "foo");
 		});
 		
-		test("TopContext", function() {
-			notEqual(AjLispcript.topContext, undefined);
+		test("Top Environment", function() {
+			notEqual(AjLisp.environment, undefined);
 		});
 		
-		test("Context", function() {
-			var context = new AjLispcript.Context();
-			equal(context.parent(), null);
-			equal(context.getValue("a"), undefined);
-			context.setValue("one", 1);
-			equal(context.getValue("one"), 1);
+		test("Environment", function() {
+			var environment = new AjLisp.Environment();
+			equal(environment.parent(), null);
+			equal(environment.getValue("a"), undefined);
+			environment.setValue("one", 1);
+			equal(environment.getValue("one"), 1);
 		});
 		
-		test("Parent Context", function() {
-			var parent = new AjLispcript.Context();
-			var context = new AjLispcript.Context(parent);
-			equal(context.parent(), parent);
+		test("Parent Environment", function() {
+			var parent = new AjLisp.Environment();
+			var environment = new AjLisp.Environment(parent);
+			equal(environment.parent(), parent);
 			equal(parent.parent(), null);
-			equal(context.getValue("a"), undefined);
-			context.setValue("one", 1);
-			equal(context.getValue("one"), 1);
+			equal(environment.getValue("a"), undefined);
+			environment.setValue("one", 1);
+			equal(environment.getValue("one"), 1);
 			parent.setValue("two", 2);
-			equal(context.getValue("two"), 2);
-			context.setValue("two", 3);
-			equal(context.getValue("two"), 3);
+			equal(environment.getValue("two"), 2);
+			environment.setValue("two", 3);
+			equal(environment.getValue("two"), 3);
 			equal(parent.getValue("two"), 2);
 		});
 		
 		test("Atom", function() {
-			var context = new AjLispcript.Context();
-			context.setValue("one", 1);
-			var one = new AjLispcript.Atom("one");
-			equal(one.evaluate(context), 1);
+			var environment = new AjLisp.Environment();
+			environment.setValue("one", 1);
+			var one = new AjLisp.Atom("one");
+			equal(one.evaluate(environment), 1);
 			ok(one.isAtom());
+			equal(one.isList(), false);
+			ok(AjLisp.isAtom(one));
+			equal(AjLisp.isList(one), false);
 		});
 		
 		test("ListForm simple apply", function() {
-			var list = new AjLispcript.List(AjLispcript.listForm, new AjLispcript.List(1, null));			
-			var result = AjLispcript.listForm.apply(list);			
+			var list = new AjLisp.List(AjLisp.environment.list, new AjLisp.List(1, null));			
+			var result = AjLisp.environment.list.apply(list);			
 			equal(result.first(), 1);
 			equal(result.rest(), null);			
 			var result2 = list.evaluate(null);			
@@ -87,23 +93,23 @@
 		});
 		
 		test("FirstForm simple apply", function() {
-			var list = new AjLispcript.List(AjLispcript.firstForm, new AjLispcript.List(1, null));			
-			var result = AjLispcript.firstForm.apply(list);			
+			var list = new AjLisp.List(AjLisp.environment.first, new AjLisp.List(1, null));			
+			var result = AjLisp.environment.first.apply(list);			
 			equal(result, 1);			
 			var result2 = list.evaluate(null);			
 			equal(result2, 1);
 		});
 		
 		test("RestForm simple apply", function() {
-			var list = new AjLispcript.List(AjLispcript.restForm, new AjLispcript.List(1, null));			
-			var result = AjLispcript.restForm.apply(list);			
+			var list = new AjLisp.List(AjLisp.environment.rest, new AjLisp.List(1, null));			
+			var result = AjLisp.environment.rest.apply(list);			
 			equal(result, null);			
 			var result2 = list.evaluate(null);			
 			equal(result2, null);
 		});
 		
 		test("MakeList", function() {
-			var list = AjLispcript.makeList(1,2,3);
+			var list = AjLisp.makeList(1,2,3);
 			
 			equal(list.first(), 1);
 			equal(list.rest().first(), 2);
