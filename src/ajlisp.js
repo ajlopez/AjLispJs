@@ -295,8 +295,15 @@ AjLisp = function() {
 	{
 		var position = 0;
 		var length = text.length;
+		var lasttoken = null;
 		
 		this.nextToken = function() {
+			if (lasttoken != null) {
+				var value = lasttoken;
+				lasttoken = null;
+				return value;
+			}
+		
 			skipSpaces();
 			
 			var char = nextChar();
@@ -311,6 +318,11 @@ AjLisp = function() {
 				return nextNumber(char);
 				
 			return new Token(char, TokenType.Separator);
+		}
+		
+		this.pushToken = function(token) 
+		{
+			lasttoken = token;
 		}
 		
 		function nextChar()
@@ -397,6 +409,46 @@ AjLisp = function() {
 	
 	var TokenType = { Name: 0, Number:1, Separator:2 };
 	
+	// Parser
+	
+	function Parser(lexer) 
+	{
+		this.parse = parse;
+		
+		function parse() {
+			var token = lexer.nextToken();
+			
+			if (token == null)
+				return null;
+				
+			if (token.type == TokenType.Name)
+				return new Atom(token.value);
+				
+			if (token.type == TokenType.Separator && token.value == "(")
+				return parseListRest();
+				
+			if (token.type == TokenType.Number)
+				return token.value;
+				
+			throw "Invalid token: " + token.value;
+		}
+		
+		function parseListRest()
+		{
+			var token = lexer.nextToken();
+			
+			if (token.type == TokenType.Separator && token.value == ")")
+				return null;
+				
+			lexer.pushToken(token);
+			
+			var first = parse();
+			var rest = parseListRest();
+
+			return new List(first, rest);
+		}
+	}
+	
 	return {
 		// Classes
 		List: List,
@@ -405,6 +457,7 @@ AjLisp = function() {
 		Closure: Closure,
 		Lexer: Lexer,
 		TokenType: TokenType,
+		Parser: Parser,
 		
 		// Functions
 		makeList: makeList,

@@ -253,6 +253,28 @@
 				equal(token.type, type);
 			}
 		});
+
+		test("Parser", function() {
+			var lexer;
+			var parser;
+			var expr;
+			
+			lexer = new AjLisp.Lexer("a");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isAtom(), true);
+			
+			lexer = new AjLisp.Lexer("(1 2 3)");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isList(), true);
+		});
 	});
 </script>
 </body>
