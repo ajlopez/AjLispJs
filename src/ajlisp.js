@@ -18,8 +18,9 @@ AjLisp = function() {
 	List.prototype.evaluate = function(environment) 
 	{
 		var form = this.first().evaluate(environment);
-		return form.apply(this);
+		return form.apply(this, environment);
 	}	
+	
 	List.prototype.evaluateList = function(environment) 
 	{
 		var first = this.first().evaluate(environment);
@@ -30,10 +31,12 @@ AjLisp = function() {
 				
 		return new List(first, rest);
 	}
+	
 	List.prototype.asString = function()
 	{
 		return "(" + this.asRestString();
 	}
+	
 	List.prototype.asRestString = function()
 	{
 		var result = "";
@@ -80,7 +83,7 @@ AjLisp = function() {
 	
 	SpecialForm.prototype.evaluate = function(environment) { return this; }
 	SpecialForm.prototype.apply = function(list, environment) 
-	{ return this.eval(list.rest()); }
+	{ return this.eval(list.rest(), environment); }
 	
 	function Closure(argnames, closureenv, body) {
 		body = new List(prognForm, body);

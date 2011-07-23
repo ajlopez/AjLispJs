@@ -156,7 +156,8 @@
 			var body = AjLisp.makeList(list1, list2, list3);
 			var names = AjLisp.makeList(new AjLisp.Atom("a"), new AjLisp.Atom("b"), new AjLisp.Atom("c"));
 			var closure = new AjLisp.Closure(names, AjLisp.environment, body);
-			equal(closure.apply(AjLisp.makeList(1,2,3), AjLisp.environment), 3);
+			var list = AjLisp.makeList(closure,1,2,3);
+			equal(list.evaluate(AjLisp.environment), 3);
 			equal(AjLisp.environment.one, 1);
 			equal(AjLisp.environment.two, 2);
 			equal(AjLisp.environment.three, 3);
