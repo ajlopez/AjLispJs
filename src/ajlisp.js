@@ -260,13 +260,21 @@ AjLisp = function() {
 			return list.rest();
 	}
 		
-	var defineForm = new SpecialForm()
+	var defineForm = new SpecialForm();
 	defineForm.eval = function eval(list, env)
 	{
 		var name = list.first().name();
 		var value = evaluate(list.rest().first(), env);
 		environment[name] = value;
 		return value;
+	}
+	
+	var lambdaForm = new SpecialForm();
+	lambdaForm.eval = function eval(list, env)
+	{
+		var argnames = list.first();
+		var body = list.rest();
+		return new Closure(argnames, env, body);
 	}
 
 	// Environment
@@ -279,6 +287,7 @@ AjLisp = function() {
 	environment.progn = prognForm;
 	
 	environment.define = defineForm;
+	environment.lambda = lambdaForm;
 	
 	return {
 		// Classes
@@ -291,7 +300,7 @@ AjLisp = function() {
 		makeList: makeList,
 		isAtom: isAtom,
 		isList: isList,
-		isNil: isNil,
+		isNil: isNil,		
 		
 		// Top Environment
 		environment: environment

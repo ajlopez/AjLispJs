@@ -162,6 +162,19 @@
 			equal(AjLisp.environment.two, 2);
 			equal(AjLisp.environment.three, 3);
 		});
+		
+		test("Lambda with parameters", function() {
+			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), new AjLisp.Atom("a"));
+			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), new AjLisp.Atom("b"));
+			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), new AjLisp.Atom("c"));
+			var names = AjLisp.makeList(new AjLisp.Atom("a"), new AjLisp.Atom("b"), new AjLisp.Atom("c"));
+			var lambda = AjLisp.makeList(AjLisp.environment.lambda, names, list1, list2, list3);
+			var list = AjLisp.makeList(lambda,1,2,3);
+			equal(list.evaluate(AjLisp.environment), 3);
+			equal(AjLisp.environment.one, 1);
+			equal(AjLisp.environment.two, 2);
+			equal(AjLisp.environment.three, 3);
+		});
 	});
 </script>
 </body>
