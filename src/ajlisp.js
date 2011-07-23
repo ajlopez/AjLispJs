@@ -289,12 +289,122 @@ AjLisp = function() {
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
 	
+	// Lexer
+	
+	function Lexer(text) 
+	{
+		var position = 0;
+		var length = text.length;
+		
+		this.nextToken = function() {
+			skipSpaces();
+			
+			var char = nextChar();
+			
+			if (char == null)
+				return null;
+			
+			if (isLetter(char))
+				return nextName(char);
+				
+			if (isDigit(char))
+				return nextNumber(char);
+				
+			return new Token(char, TokenType.Separator);
+		}
+		
+		function nextChar()
+		{
+			if (position > length)
+				return null;
+				
+			return text[position++];
+		}
+		
+		function skipSpaces()
+		{
+			while (position < length && text[position] <= ' ')
+				position++;
+		}
+		
+		function nextName(char)
+		{
+			var name = char;
+			
+			while ((char = nextChar()) != null && isLetter(char))
+				name += char;
+				
+			if (char != null)
+				position--;
+				
+			return new Token(name, TokenType.Name);
+		}
+		
+		function nextNumber(char)
+		{
+			var number = char;
+			
+			while ((char = nextChar()) != null && isDigit(char))
+				number += char;
+				
+			if (char == '.')
+				return nextFloatNumber(number+'.');
+				
+			if (char != null)
+				position--;
+				
+			return new Token(parseInt(number), TokenType.Number);
+		}
+		
+		function nextFloatNumber(number)
+		{
+			var char;
+			
+			while ((char = nextChar()) != null && isDigit(char))
+				number += char;
+				
+			if (char != null)
+				position--;
+				
+			return new Token(parseFloat(number), TokenType.Number);
+		}
+		
+		function isLetter(char)
+		{
+			if (char >= 'a' && char <= 'z')
+				return true;
+				
+			if (char >= 'A' && char <= 'Z')
+				return true;
+				
+			return false;
+		}
+		
+		function isDigit(char)
+		{
+			if (char >= '0' && char <= '9')
+				return true;
+				
+			return false;
+		}
+	}
+	
+	function Token(value, type)
+	{
+		this.value = value;
+		this.type = type;
+	}
+	
+	var TokenType = { Name: 0, Number:1, Separator:2 };
+	
 	return {
 		// Classes
 		List: List,
 		Environment: Environment,
 		Atom: Atom,
 		Closure: Closure,
+		Lexer: Lexer,
+		TokenType: TokenType,
 		
 		// Functions
 		makeList: makeList,

@@ -175,6 +175,84 @@
 			equal(AjLisp.environment.two, 2);
 			equal(AjLisp.environment.three, 3);
 		});
+		
+		test("Lexer Simple Token", function() {
+			var lexer;
+			var token;
+			
+			lexer = new AjLisp.Lexer("");
+			equal(lexer.nextToken(), null);
+
+			lexer = new AjLisp.Lexer("a");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "a");
+			equal(token.type, AjLisp.TokenType.Name);
+
+			lexer = new AjLisp.Lexer("name");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "name");
+			equal(token.type, AjLisp.TokenType.Name);
+
+			lexer = new AjLisp.Lexer("123");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, 123);
+			equal(token.type, AjLisp.TokenType.Number);
+
+			lexer = new AjLisp.Lexer("123.45");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, 123.45);
+			equal(token.type, AjLisp.TokenType.Number);
+
+			lexer = new AjLisp.Lexer("(");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "(");
+			equal(token.type, AjLisp.TokenType.Separator);
+		});
+		
+		test("Lexer Multiple Tokens", function() {
+			var lexer;
+			var token;
+			
+			lexer = new AjLisp.Lexer("(list 1 2 3)");
+			
+			token = lexer.nextToken();
+			isSeparator(token, "(");
+			token = lexer.nextToken();
+			isName(token, "list");
+			token = lexer.nextToken();
+			isNumber(token, 1);
+			token = lexer.nextToken();
+			isNumber(token, 2);
+			token = lexer.nextToken();
+			isNumber(token, 3);
+			token = lexer.nextToken();
+			isSeparator(token, ")");
+			token = lexer.nextToken();
+			equal(token, null);
+			
+			function isSeparator(token, expected) {
+				return isToken(token, expected, AjLisp.TokenType.Separator);
+			}
+			
+			function isName(token, expected) {
+				return isToken(token, expected, AjLisp.TokenType.Name);
+			}
+			
+			function isNumber(token, expected) {
+				return isToken(token, expected, AjLisp.TokenType.Number);
+			}
+			
+			function isToken(token, value, type) {
+				notEqual(token, null);
+				equal(token.value, value);
+				equal(token.type, type);
+			}
+		});
 	});
 </script>
 </body>
