@@ -95,7 +95,7 @@
 		});
 		
 		test("FirstForm simple apply", function() {
-			var list = new AjLisp.List(AjLisp.environment.first, new AjLisp.List(1, null));			
+			var list = AjLisp.makeList(AjLisp.environment.first, AjLisp.makeList(AjLisp.environment.list, 1));
 			var result = AjLisp.environment.first.apply(list);			
 			equal(result, 1);			
 			var result2 = list.evaluate(null);			
@@ -103,7 +103,7 @@
 		});
 		
 		test("RestForm simple apply", function() {
-			var list = new AjLisp.List(AjLisp.environment.rest, new AjLisp.List(1, null));			
+			var list = AjLisp.makeList(AjLisp.environment.rest, AjLisp.makeList(AjLisp.environment.list, 1));
 			var result = AjLisp.environment.rest.apply(list);			
 			equal(result, null);			
 			var result2 = list.evaluate(null);			
@@ -274,6 +274,47 @@
 			
 			notEqual(expr, null);
 			equal(expr.isList(), true);
+			equal(expr.asString(), "(1 2 3)");
+			
+			lexer = new AjLisp.Lexer("(list (add 1 2 3) a b c)");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isList(), true);
+			equal(expr.asString(), "(list (add 1 2 3) a b c)");
+			
+			lexer = new AjLisp.Lexer("nil");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			equal(expr, null);
+
+			lexer = new AjLisp.Lexer("(nil nil nil)");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isList(), true);
+			equal(expr.asString(), "(nil nil nil)");
+		});
+		
+		test("Evaluate Simple Expression", function() {
+			equal(eval("1"), 1);
+			equal(eval("(quote (1 2 3))").asString(), "(1 2 3)");
+			equal(eval("(list 1 2 3)").asString(), "(1 2 3)");
+			equal(eval("(first (list 1 2 3))"), 1);
+			
+			function eval(text) {
+				var lexer = new AjLisp.Lexer(text);
+				var parser = new AjLisp.Parser(lexer);
+				var expr = parser.parse();
+				equal(parser.parse(), null);
+				return expr.evaluate(AjLisp.environment);
+			}
 		});
 	});
 </script>

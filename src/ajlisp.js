@@ -56,11 +56,10 @@ AjLisp = function() {
 	}
 	
 	function Atom(name) {
-		function getValue(environment) {
+		this.evaluate = function(environment) {
 			return environment.getValue(name);
-		}
-	
-		this.evaluate = getValue;
+		};
+		
 		this.name = function() { return name; };
 	}
 	
@@ -75,7 +74,12 @@ AjLisp = function() {
 	Form.prototype.apply = function(list, environment) 
 	{ 
 		if (isNil(list)) return this.eval(list, environment);
-		return this.eval(list.rest().evaluateList(environment), environment); 
+		var rest = list.rest();
+		
+		if (rest != null)
+			rest = rest.evaluateList(environment);
+			
+		return this.eval(rest, environment); 
 	}
 	
 	function SpecialForm() {
@@ -251,13 +255,19 @@ AjLisp = function() {
 	var firstForm = new Form();
 	firstForm.eval = function eval(list) 
 	{
-		return list.first();
+		return list.first().first();
 	}
 	
 	var restForm = new Form();
 	restForm.eval = function eval(list) 
 	{
-			return list.rest();
+		return list.first().rest();
+	}
+	
+	var consForm = new Form();
+	consForm.eval = function eval(list)
+	{
+		return new List(list.first(), list.rest());
 	}
 		
 	var defineForm = new SpecialForm();
@@ -276,6 +286,12 @@ AjLisp = function() {
 		var body = list.rest();
 		return new Closure(argnames, env, body);
 	}
+	
+	var quoteForm = new SpecialForm();
+	quoteForm.eval = function eval(list, env)
+	{
+		return list.first();
+	}
 
 	// Environment
 	
@@ -288,6 +304,8 @@ AjLisp = function() {
 	
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
+	
+	environment.quote = quoteForm;
 	
 	// Lexer
 	
@@ -421,8 +439,12 @@ AjLisp = function() {
 			if (token == null)
 				return null;
 				
-			if (token.type == TokenType.Name)
+			if (token.type == TokenType.Name) {
+				if (token.value == "nil")
+					return null;
+					
 				return new Atom(token.value);
+			}
 				
 			if (token.type == TokenType.Separator && token.value == "(")
 				return parseListRest();
@@ -463,7 +485,8 @@ AjLisp = function() {
 		makeList: makeList,
 		isAtom: isAtom,
 		isList: isList,
-		isNil: isNil,		
+		isNil: isNil,
+		asString: asString,
 		
 		// Top Environment
 		environment: environment
