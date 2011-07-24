@@ -267,7 +267,7 @@ AjLisp = function() {
 	var consForm = new Form();
 	consForm.eval = function eval(list)
 	{
-		return new List(list.first(), list.rest());
+		return new List(list.first(), list.rest().first());
 	}
 		
 	var defineForm = new SpecialForm();
@@ -300,6 +300,7 @@ AjLisp = function() {
 	environment.list = listForm;
 	environment.first = firstForm;
 	environment.rest = restForm;
+	environment.cons = consForm;
 	environment.progn = prognForm;
 	
 	environment.define = defineForm;

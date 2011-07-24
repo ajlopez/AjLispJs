@@ -307,6 +307,8 @@
 			equal(eval("(quote (1 2 3))").asString(), "(1 2 3)");
 			equal(eval("(list 1 2 3)").asString(), "(1 2 3)");
 			equal(eval("(first (list 1 2 3))"), 1);
+			equal(eval("(rest (list 1 2 3))").asString(), "(2 3)");
+			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");
 			
 			function eval(text) {
 				var lexer = new AjLisp.Lexer(text);
