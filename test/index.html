@@ -15,6 +15,23 @@
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture">test markup</div>
+	
+<div id="mapfirst" style="display: none">
+(define mapfirst (fn lst)
+  (if (nilp lst)
+    nil
+    (cons
+      (fn (first lst))
+      (mapfirst fn (rest lst))
+    )
+  )
+)
+</div>	
+
+<div id="append" style="display: none">
+(define append (x y) (if (nil? x) y (cons (first x) (append (rest x) y))))
+</div>	
+
 <script type="text/javascript">
 	$(function() {
 		test("First Test", function() {
@@ -300,6 +317,11 @@
 			notEqual(expr, null);
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(nil nil nil)");
+
+			lexer = new AjLisp.Lexer($("#mapfirst").html());
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
 		});
 		
 		test("Evaluate Simple Expression", function() {
@@ -335,6 +357,17 @@
 			equal(eval("(listp 1)"), false);
 			equal(eval("(nilp (list 1 2 3))"), false);
 			equal(eval("(listp (list 1 2 3))"), true);
+		});
+
+		test("Evaluate mapfirst", function() {
+			eval($("#mapfirst").html());
+			equal(eval("(mapfirst list (list 1 2 3))").asString(), "((1) (2) (3))");
+			equal(eval("(mapfirst first (quote ((1) (2) (3))))").asString(), "(1 2 3)");
+		});
+
+		test("Evaluate append", function() {
+			eval($("#append").html());
+			equal(eval("(append (list 1 2) (list 3 4 5))").asString(), "(1 2 3 4 5)");
 		});
 
 		function eval(text) {

@@ -346,9 +346,37 @@ AjLisp = function() {
 	defineForm.eval = function eval(list, env)
 	{
 		var name = list.first().name();
-		var value = evaluate(list.rest().first(), env);
+		var value = list.rest().first();
+		var body = list.rest().rest();
+		
+		if (isNil(body)) {
+			value = evaluate(value, env);
+		}
+		else {
+			value = new Closure(value, env, body);
+		}		
+		
 		environment[name] = value;
 		return value;
+	}
+		
+	var ifForm = new SpecialForm();
+	ifForm.eval = function eval(list, env)
+	{
+		var cond = evaluate(list.first(), env);
+		var then = list.rest().first();
+		var elsebody = list.rest().rest();
+		
+		if (!isNil(cond) && cond != false)
+			return evaluate(then, env);
+
+		while (!isNil(elsebody)) 
+		{
+			result = evaluate(elsebody.first(), env);
+			elsebody = elsebody.rest();
+		}
+		
+		return result;			
 	}
 	
 	var lambdaForm = new SpecialForm();
@@ -382,6 +410,7 @@ AjLisp = function() {
 	environment.rest = restForm;
 	environment.cons = consForm;
 	environment.progn = prognForm;
+	environment.if = ifForm;
 	
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
