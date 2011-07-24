@@ -310,14 +310,40 @@
 			equal(eval("(rest (list 1 2 3))").asString(), "(2 3)");
 			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");
 			
-			function eval(text) {
-				var lexer = new AjLisp.Lexer(text);
-				var parser = new AjLisp.Parser(lexer);
-				var expr = parser.parse();
-				equal(parser.parse(), null);
-				return expr.evaluate(AjLisp.environment);
-			}
 		});
+		
+		test("Evaluate Simple Expression with Atoms", function() {
+			eval("(define one 1)");
+			eval("(define two 2)");
+			eval("(define three 3)");
+			equal(eval("one"), 1);
+			equal(eval("(quote one)").asString(), "one");
+			equal(eval("(list one two three)").asString(), "(1 2 3)");
+			equal(eval("(first (list one two three))"), 1);
+			equal(eval("(rest (list one two three))").asString(), "(2 3)");
+			equal(eval("(cons one (list two three))").asString(), "(1 2 3)");
+		});
+		
+		test("Evaluate Let", function() {
+			equal(eval("(let ((a 1) (b 2) (c 3)) (list a b c))").asString(), "(1 2 3)");
+		});
+		
+		test("Evaluate Predicates", function() {
+			equal(eval("(nilp)"), true);
+			equal(eval("(listp)"), true);
+			equal(eval("(nilp 1)"), false);
+			equal(eval("(listp 1)"), false);
+			equal(eval("(nilp (list 1 2 3))"), false);
+			equal(eval("(listp (list 1 2 3))"), true);
+		});
+
+		function eval(text) {
+			var lexer = new AjLisp.Lexer(text);
+			var parser = new AjLisp.Parser(lexer);
+			var expr = parser.parse();
+			equal(parser.parse(), null);
+			return expr.evaluate(AjLisp.environment);
+		}
 	});
 </script>
 </body>

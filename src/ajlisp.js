@@ -26,7 +26,7 @@ AjLisp = function() {
 		var first = this.first().evaluate(environment);
 		var rest = this.rest();
 			
-		if (rest != null)
+		if (!isNil(rest))
 			rest = rest.evaluateList(environment);
 				
 		return new List(first, rest);
@@ -100,6 +100,18 @@ AjLisp = function() {
 	
 	Closure.prototype.evaluate = Form.prototype.evaluate;
 	Closure.prototype.apply = Form.prototype.apply;
+		
+	function FormClosure(argnames, closureenv, body) {
+		body = new List(prognForm, body);
+		
+		this.eval = function(args, environment) {
+			var newenv = makeEnvironment(argnames, args, closureenv);
+			return evaluate(body, newenv);
+		};
+	}
+	
+	FormClosure.prototype.evaluate = SpecialForm.prototype.evaluate;
+	FormClosure.prototype.apply = SpecialForm.prototype.apply;
 		
 	function Environment(parent) {
 		function getParent() {
@@ -189,6 +201,32 @@ AjLisp = function() {
 		return newenv;
 	}
 	
+	function makeLetEnvironment(namesvalues, parent)
+	{
+		var newenv = new Environment(parent);
+		
+		if (isNil(namesvalues))
+			return newenv;
+			
+		var name;
+		var value;
+		
+		while (!isNil(namesvalues)) 
+		{
+			name = namesvalues.first().first().name();
+			value = namesvalues.first().rest().first();
+			
+			if (!isNil(value))
+				value = value.evaluate(parent);
+				
+			newenv[name] = value;
+			
+			namesvalues = namesvalues.rest();
+		}
+		
+		return newenv;
+	}
+
 	function isAtom(x) 
 	{
 		if (x == null)
@@ -238,6 +276,24 @@ AjLisp = function() {
 		return list;
 	}
 	
+	var nilpForm = new Form();
+	nilpForm.eval = function eval(list) 
+	{
+		if (isNil(list))
+			return true;
+			
+		return isNil(list.first());
+	}
+	
+	var listpForm = new Form();
+	listpForm.eval = function eval(list) 
+	{
+		if (isNil(list))
+			return true;
+			
+		return isList(list.first());
+	}
+	
 	var prognForm = new SpecialForm();
 	prognForm.eval = function eval(list, environment)
 	{
@@ -247,6 +303,22 @@ AjLisp = function() {
 		{
 			result = evaluate(list.first(), environment);
 			list = list.rest();
+		}
+		
+		return result;
+	}
+	
+	var letForm = new SpecialForm();
+	letForm.eval = function eval(list, environment)
+	{
+		var result = null;
+		var newenv = makeLetEnvironment(list.first(), environment);
+		var body = list.rest();
+		
+		while (!isNil(body)) 
+		{
+			result = evaluate(body.first(), newenv);
+			body = body.rest();
 		}
 		
 		return result;
@@ -287,6 +359,14 @@ AjLisp = function() {
 		return new Closure(argnames, env, body);
 	}
 	
+	var flambdaForm = new SpecialForm();
+	flambdaForm.eval = function eval(list, env)
+	{
+		var argnames = list.first();
+		var body = list.rest();
+		return new FormClosure(argnames, env, body);
+	}
+	
 	var quoteForm = new SpecialForm();
 	quoteForm.eval = function eval(list, env)
 	{
@@ -305,8 +385,13 @@ AjLisp = function() {
 	
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
+	environment.flambda = flambdaForm;
+	environment.let = letForm;
 	
 	environment.quote = quoteForm;
+	
+	environment.nilp = nilpForm;
+	environment.listp = listpForm;
 	
 	// Lexer
 	
