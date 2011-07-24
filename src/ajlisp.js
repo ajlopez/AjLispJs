@@ -23,7 +23,7 @@ AjLisp = function() {
 	
 	List.prototype.evaluateList = function(environment) 
 	{
-		var first = this.first().evaluate(environment);
+		var first = evaluate(this.first(), environment);
 		var rest = this.rest();
 			
 		if (!isNil(rest))

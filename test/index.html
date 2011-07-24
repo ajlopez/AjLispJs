@@ -29,7 +29,7 @@
 </div>	
 
 <div id="append" style="display: none">
-(define append (x y) (if (nil? x) y (cons (first x) (append (rest x) y))))
+(define append (x y) (if (nilp x) y (cons (first x) (append (rest x) y))))
 </div>	
 
 <script type="text/javascript">
@@ -368,6 +368,7 @@
 		test("Evaluate append", function() {
 			eval($("#append").html());
 			equal(eval("(append (list 1 2) (list 3 4 5))").asString(), "(1 2 3 4 5)");
+			equal(eval("(append (list 1 2) nil)").asString(), "(1 2)");
 		});
 
 		function eval(text) {
