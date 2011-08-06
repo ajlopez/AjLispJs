@@ -458,6 +458,16 @@
 			equal(eval("(myquote2 (1 2 3))").asString(), "(1 2 3)");
 			eval("(definem myfirst (x) (list 'first x))");
 			equal(eval("(myfirst '(a b c))").asString(), "a");
+			eval("(definem apply (fn args) (cons fn args))");
+			equal(eval("(apply list ('a 'b 'c))").asString(), "(a b c)");
+			equal(eval("(apply rest ('(a b c)))").asString(), "(b c)");
+			equal(eval("(apply (first (list rest list)) ('(a b c)))").asString(), "(b c)");
+			eval("(definem cond lst (if (nilp lst) nil (list 'if (first (first lst)) (cons 'do (rest (first lst))) (cons 'cond (rest lst)))))");
+			equal(eval("(cond)"), null);
+			equal(eval("(cond (true 'a))").asString(), "a");
+			equal(eval("(cond (nil 'a))"), null);
+			equal(eval("(cond (nil 'a) (true 'b))").asString(), "b");
+			equal(eval("(cond (nil 'a) (true 'b 'c))").asString(), "c");
 		});
 
 		function eval(text) {
