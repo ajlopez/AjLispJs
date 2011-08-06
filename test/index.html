@@ -387,6 +387,8 @@
 			equal(eval("(rest (list 1 2 3))").asString(), "(2 3)");
 			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");
 			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");			
+			equal(eval("(cons 1 nil)").asString(), "(1)");			
+			equal(eval("(cons 1)").asString(), "(1)");			
 		});
 		
 		test("Evaluate Simple Expression with Atoms", function() {

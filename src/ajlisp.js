@@ -366,7 +366,16 @@ AjLisp = function() {
 	var consForm = new Form();
 	consForm.eval = function eval(list)
 	{
-		return new List(list.first(), list.rest().first());
+		if (isNil(list))
+			return null;
+			
+		var first = list.first();
+		var rest = list.rest();
+		
+		if (isNil(rest))
+			return new List(first, null);
+			
+		return new List(first, rest.first());
 	}
 		
 	var defineForm = new SpecialForm();
