@@ -227,6 +227,12 @@
 			equal(token.value, "name");
 			equal(token.type, AjLisp.TokenType.Name);
 
+			lexer = new AjLisp.Lexer("name2");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "name2");
+			equal(token.type, AjLisp.TokenType.Name);
+
 			lexer = new AjLisp.Lexer("'");
 			token = lexer.nextToken();
 			notEqual(token, null);
@@ -442,6 +448,13 @@
 		
 		test("Mlambda", function() {
 			equal(eval("((mlambda (x) (list 'quote x)) y)").asString(), "y");
+			equal(eval("(let ((z '(a b))) ((mlambda (x) (cons 'first (cons x))) z))").asString(), "a");
+			eval("(define definef (mlambda x (list 'define (first x) (cons 'flambda (rest x)))))");
+			eval("(definef myquote (x) x)");
+			equal(eval("(myquote x)").asString(), "x");
+			eval("(define definem (mlambda x (list 'define (first x) (cons 'mlambda (rest x)))))");
+			eval("(definem myquote2 (x) (list 'quote x))");
+			equal(eval("(myquote2 x)").asString(), "x");
 		});
 
 		function eval(text) {
