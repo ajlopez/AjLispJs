@@ -158,11 +158,11 @@
 			equal(AjLisp.environment.one, 1);
 		});
 		
-		test("Progn", function() {
+		test("Do", function() {
 			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
 			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), 2);
 			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), 3);
-			var list = AjLisp.makeList(AjLisp.environment.progn, list1, list2, list3);
+			var list = AjLisp.makeList(AjLisp.environment.do, list1, list2, list3);
 			equal(list.evaluate(AjLisp.environment), 3);
 			equal(AjLisp.environment.one, 1);
 			equal(AjLisp.environment.two, 2);
@@ -455,6 +455,9 @@
 			eval("(define definem (mlambda x (list 'define (first x) (cons 'mlambda (rest x)))))");
 			eval("(definem myquote2 (x) (list 'quote x))");
 			equal(eval("(myquote2 x)").asString(), "x");
+			equal(eval("(myquote2 (1 2 3))").asString(), "(1 2 3)");
+			eval("(definem myfirst (x) (list 'first x))");
+			equal(eval("(myfirst '(a b c))").asString(), "a");
 		});
 
 		function eval(text) {

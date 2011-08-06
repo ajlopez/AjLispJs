@@ -98,7 +98,7 @@ AjLisp = function() {
 	{ return this.eval(list.rest(), environment); }
 	
 	function Closure(argnames, closureenv, body) {
-		body = new List(prognForm, body);
+		body = new List(doForm, body);
 		
 		this.eval = function(args, environment) {
 			var newenv = makeEnvironment(argnames, args, closureenv);
@@ -110,7 +110,7 @@ AjLisp = function() {
 	Closure.prototype.apply = Form.prototype.apply;
 		
 	// function FormClosure(argnames, closureenv, body) {
-		// body = new List(prognForm, body);
+		// body = new List(doForm, body);
 		
 		// this.eval = function(args, environment) {
 			// var newenv = makeEnvironment(argnames, args, closureenv);
@@ -128,7 +128,7 @@ AjLisp = function() {
 		
 	function MacroClosure(argnames, closureenv, body)
 	{
-		body = new List(prognForm, body);
+		body = new List(doForm, body);
 		
 		this.eval = function(args, environment) {
 			var newenv = makeEnvironment(argnames, args, closureenv);
@@ -321,8 +321,8 @@ AjLisp = function() {
 		return isList(list.first());
 	}
 	
-	var prognForm = new SpecialForm();
-	prognForm.eval = function eval(list, environment)
+	var doForm = new SpecialForm();
+	doForm.eval = function eval(list, environment)
 	{
 		var result = null;
 		
@@ -453,7 +453,7 @@ AjLisp = function() {
 	environment.first = firstForm;
 	environment.rest = restForm;
 	environment.cons = consForm;
-	environment.progn = prognForm;
+	environment.do = doForm;
 	environment.if = ifForm;
 	
 	environment.define = defineForm;
