@@ -34,6 +34,11 @@ AjLisp = function() {
 	
 	List.prototype.asString = function()
 	{
+		var f = this.first();
+		
+		if (isAtom(f) && !isNil(f) && f.name() == "quote")
+			return "'" + this.rest().first().asString();
+			
 		return "(" + this.asRestString();
 	}
 	
@@ -67,6 +72,8 @@ AjLisp = function() {
 	Atom.prototype.isList = function() { return false; }
 	Atom.prototype.asString = function() { return this.name(); }
 	
+	var quote = new Atom("quote");
+	
 	function Form() {
 	}
 	
@@ -74,6 +81,7 @@ AjLisp = function() {
 	Form.prototype.apply = function(list, environment) 
 	{ 
 		if (isNil(list)) return this.eval(list, environment);
+		
 		var rest = list.rest();
 		
 		if (rest != null)
@@ -450,6 +458,9 @@ AjLisp = function() {
 			if (isDigit(char))
 				return nextNumber(char);
 				
+			if (char == "'")
+				return new Token(char, TokenType.Name);
+				
 			return new Token(char, TokenType.Separator);
 		}
 		
@@ -561,6 +572,8 @@ AjLisp = function() {
 					return false;
 				if (token.value == "true")
 					return true;
+				if (token.value == "'")
+					return new List(quote, new List(parse(), null));
 					
 				return new Atom(token.value);
 			}

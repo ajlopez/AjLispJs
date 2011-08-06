@@ -227,6 +227,12 @@
 			equal(token.value, "name");
 			equal(token.type, AjLisp.TokenType.Name);
 
+			lexer = new AjLisp.Lexer("'");
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "'");
+			equal(token.type, AjLisp.TokenType.Name);
+
 			lexer = new AjLisp.Lexer("123");
 			token = lexer.nextToken();
 			notEqual(token, null);
@@ -331,6 +337,13 @@
 			
 			equal(expr, false);
 
+			lexer = new AjLisp.Lexer("true");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			equal(expr, true);
+
 			lexer = new AjLisp.Lexer("(nil nil nil)");
 			parser = new AjLisp.Parser(lexer);
 			
@@ -344,6 +357,26 @@
 			parser = new AjLisp.Parser(lexer);
 			
 			expr = parser.parse();
+		});
+
+		test("Parse Quote", function() {
+			var lexer;
+			var parser;
+			var expr;
+			
+			lexer = new AjLisp.Lexer("'a");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			equal(expr.asString(), "'a");
+			
+			lexer = new AjLisp.Lexer("(quote a)");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			equal(expr.asString(), "'a");
 		});
 		
 		test("Evaluate Simple Expression", function() {
@@ -397,6 +430,12 @@
 			eval($("#mapcond").html());
 			equal(eval("(mapcond listp (list 1 (list 2) 3))").asString(), "((2))");
 			equal(eval("(mapcond nilp (list 1 nil 3))").asString(), "(nil)");
+		});
+		
+		test("Flambda", function() {
+			equal(eval("((flambda (x) x) y)").asString(), "y");
+			eval("(define myquote (flambda (x) x))");
+			equal(eval("(myquote (x y))").asString(), "(x y)");
 		});
 
 		function eval(text) {
