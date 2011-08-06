@@ -21,6 +21,14 @@ AjLisp = function() {
 		return form.apply(this, environment);
 	}	
 	
+	List.prototype.equals = function(list)
+	{
+		if (!isList(list))
+			return false;
+			
+		return equals(this.first(), list.first()) && equals(this.rest(), list.rest());
+	}
+	
 	List.prototype.evaluateList = function(environment) 
 	{
 		var first = evaluate(this.first(), environment);
@@ -71,6 +79,14 @@ AjLisp = function() {
 	Atom.prototype.isAtom = function() { return true; }
 	Atom.prototype.isList = function() { return false; }
 	Atom.prototype.asString = function() { return this.name(); }
+	
+	Atom.prototype.equals = function(atom)
+	{
+		if (isNil(atom) || !isAtom(atom))
+			return false;
+			
+		return this.name() == atom.name();
+	}
 	
 	var quote = new Atom("quote");
 	
@@ -191,6 +207,23 @@ AjLisp = function() {
 		return value+"";
 	}
 	
+	function equals(obj1, obj2)
+	{
+		if (isNil(obj1))
+			return isNil(obj2);
+
+		if (isNil(obj2))
+			return isNil(obj1);
+			
+		if (isAtom(obj1) && isAtom(obj2))
+			return obj1.equals(obj2);
+			
+		if (isList(obj1) && isList(obj2))
+			return obj1.equals(obj2);
+			
+		return obj1 == obj2;
+	}
+	
 	function makeEnvironment(names, values, parent)
 	{
 		var newenv = new Environment(parent);
@@ -244,7 +277,7 @@ AjLisp = function() {
 			value = namesvalues.first().rest().first();
 			
 			if (!isNil(value))
-				value = value.evaluate(parent);
+				value = evaluate(value, parent);
 				
 			newenv[name] = value;
 			
@@ -319,6 +352,21 @@ AjLisp = function() {
 			return true;
 			
 		return isList(list.first());
+	}
+	
+	var equalpForm = new Form();
+	equalpForm.eval = function eval(list) 
+	{
+		if (isNil(list))
+			return true;
+			
+		var first = list.first();
+		var second = null;
+		
+		if (!isNil(list.rest()))
+			second = list.rest().first();
+			
+		return equals(first, second);
 	}
 	
 	var doForm = new SpecialForm();
@@ -466,6 +514,7 @@ AjLisp = function() {
 	
 	environment.nilp = nilpForm;
 	environment.listp = listpForm;
+	environment.equalp = equalpForm;
 	
 	// Lexer
 	
@@ -656,6 +705,7 @@ AjLisp = function() {
 		isList: isList,
 		isNil: isNil,
 		asString: asString,
+		evaluate: evaluate,
 		
 		// Top Environment
 		environment: environment
@@ -664,9 +714,9 @@ AjLisp = function() {
 
 //Object.prototype.evaluate = function() { return this; };
 
-String.prototype.evaluate = function(environment) { return this; };
+// String.prototype.evaluate = function(environment) { return this; };
 
-Number.prototype.evaluate = function(environment) { return this; };
+// Number.prototype.evaluate = function(environment) { return this; };
 
-Date.prototype.evaluate = function(environment) { return this; };
+// Date.prototype.evaluate = function(environment) { return this; };
 

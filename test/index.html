@@ -66,15 +66,22 @@
 			equal(AjLisp.isAtom(list), false);
 			equal(AjLisp.isList(list), true);
 			equal(list.asString(), "(1.2)");
+			equal(list.equals(list), true);
+			var list2 = new AjLisp.List(1,2);
+			equal(list.equals(list2), true);
+			equal(list2.equals(list), true);
+			var list3 = AjLisp.makeList(1,2,3);
+			equal(list.equals(list3), false);
+			equal(list3.equals(list), false);
 		});
 		
 		test("Object Evaluate", function() {
 			var environment = new AjLisp.Environment();
 			var n = 1;
-			equals(n.evaluate(environment), 1);
+			equals(AjLisp.evaluate(n, environment), 1);
 			var m = 2;
-			equal(m.evaluate(environment), 2);
-			equal("foo".evaluate(environment), "foo");
+			equal(AjLisp.evaluate(m, environment), 2);
+			equal(AjLisp.evaluate("foo", environment), "foo");
 		});
 		
 		test("Top Environment", function() {
@@ -114,6 +121,9 @@
 			ok(AjLisp.isAtom(one));
 			equal(AjLisp.isList(one), false);
 			equal(one.asString(), "one");
+			equal(one.equals(one), true);
+			var one2 = new AjLisp.Atom("one");
+			equal(one.equals(one2), true);
 		});
 		
 		test("ListForm simple apply", function() {
@@ -250,6 +260,7 @@
 			notEqual(token, null);
 			equal(token.value, 123.45);
 			equal(token.type, AjLisp.TokenType.Number);
+			equal(typeof (token.value), "number");
 
 			lexer = new AjLisp.Lexer("(");
 			token = lexer.nextToken();
@@ -288,6 +299,7 @@
 			}
 			
 			function isNumber(token, expected) {
+				equal(typeof token.value, "number");
 				return isToken(token, expected, AjLisp.TokenType.Number);
 			}
 			
@@ -468,14 +480,28 @@
 			equal(eval("(cond (nil 'a))"), null);
 			equal(eval("(cond (nil 'a) (true 'b))").asString(), "b");
 			equal(eval("(cond (nil 'a) (true 'b 'c))").asString(), "c");
+			eval("(define atomp (x) (cond ((nilp x) true) ((listp x) false) (true true)))");
+			equal(eval("(atomp nil)"), true);
+			equal(eval("(atomp 'a)"), true);
+			equal(eval("(atomp '(a b))"), false);
 		});
-
+		
+		test("Equalp", function() {
+			equal(eval("(equalp 'one 'one)"), true);
+			equal(eval("(equalp '(1 2 3) '(1 2 3))"), true);
+			equal(eval("(equalp 'one 'two)"), false);
+			equal(eval("(equalp '(1 2 3) '(1 2 3 4))"), false);
+			equal(eval("(equalp '(1 2 3 4) '(1 2 3))"), false);
+			equal(eval("(equalp 1 1)"), true);
+			equal(eval("(equalp 1 2)"), false);
+		});
+		
 		function eval(text) {
 			var lexer = new AjLisp.Lexer(text);
 			var parser = new AjLisp.Parser(lexer);
 			var expr = parser.parse();
 			equal(parser.parse(), null);
-			return expr.evaluate(AjLisp.environment);
+			return AjLisp.evaluate(expr, AjLisp.environment);
 		}
 	});
 </script>
