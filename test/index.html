@@ -32,6 +32,21 @@
 (define append (x y) (if (nilp x) y (cons (first x) (append (rest x) y))))
 </div>	
 
+<div id="mapcond" style="display: none">
+(define mapcond (fn lst)
+	(if (nilp lst)
+		nil
+		(if (fn (first lst))
+			(cons 
+				(first lst) 
+				(mapcond fn (rest lst))
+			)
+			(mapcond fn (rest lst))
+		)
+	)
+)
+</div>	
+
 <script type="text/javascript">
 	$(function() {
 		test("First Test", function() {
@@ -309,6 +324,13 @@
 			
 			equal(expr, null);
 
+			lexer = new AjLisp.Lexer("false");
+			parser = new AjLisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			equal(expr, false);
+
 			lexer = new AjLisp.Lexer("(nil nil nil)");
 			parser = new AjLisp.Parser(lexer);
 			
@@ -369,6 +391,12 @@
 			eval($("#append").html());
 			equal(eval("(append (list 1 2) (list 3 4 5))").asString(), "(1 2 3 4 5)");
 			equal(eval("(append (list 1 2) nil)").asString(), "(1 2)");
+		});
+
+		test("Evaluate mapcond", function() {
+			eval($("#mapcond").html());
+			equal(eval("(mapcond listp (list 1 (list 2) 3))").asString(), "((2))");
+			equal(eval("(mapcond nilp (list 1 nil 3))").asString(), "(nil)");
 		});
 
 		function eval(text) {

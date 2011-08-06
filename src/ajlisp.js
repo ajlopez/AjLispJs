@@ -557,6 +557,10 @@ AjLisp = function() {
 			if (token.type == TokenType.Name) {
 				if (token.value == "nil")
 					return null;
+				if (token.value == "false")
+					return false;
+				if (token.value == "true")
+					return true;
 					
 				return new Atom(token.value);
 			}
