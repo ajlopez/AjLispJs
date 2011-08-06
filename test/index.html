@@ -56,11 +56,11 @@
 </div>	
 
 <div id="atomp" style="display: none">
-(define atomp (x) (cond ((nilp x) true) ((listp x) nil) (true true)))
+(define atomp (x) (cond ((nilp x) true) ((listp x) false) (true true)))
 </div>	
 
 <div id="and" style="display: none">
-(definem and lst (if (nilp lst) true (list 'cond (list (first lst) (cons 'and (rest lst))) '(true nil))))
+(definem and lst (if (nilp lst) true (list 'cond (list (first lst) (cons 'and (rest lst))) '(true false))))
 </div>	
 
 <div id="backquote" style="display: none">
@@ -500,10 +500,10 @@
 			equal(eval("(apply list ('a 'b 'c))").asString(), "(a b c)");
 			equal(eval("(apply rest ('(a b c)))").asString(), "(b c)");
 			equal(eval("(apply (first (list rest list)) ('(a b c)))").asString(), "(b c)");
-			eval("(definem cond lst (if (nilp lst) nil (list 'if (first (first lst)) (cons 'do (rest (first lst))) (cons 'cond (rest lst)))))");
-			equal(eval("(cond)"), null);
+			eval("(definem cond lst (if (nilp lst) false (list 'if (first (first lst)) (cons 'do (rest (first lst))) (cons 'cond (rest lst)))))");
+			equal(eval("(cond)"), false);
 			equal(eval("(cond (true 'a))").asString(), "a");
-			equal(eval("(cond (nil 'a))"), null);
+			equal(eval("(cond (nil 'a))"), false);
 			equal(eval("(cond (nil 'a) (true 'b))").asString(), "b");
 			equal(eval("(cond (nil 'a) (true 'b 'c))").asString(), "c");
 			eval("(define atomp (x) (cond ((nilp x) true) ((listp x) false) (true true)))");
@@ -534,10 +534,13 @@
 			equal(eval("(backquote (a (b c) d))").asString(), "(a (b c) d)");
 			
 			eval("(define x '(b b))");
+			equal(eval("(backquote (unquote x))").asString(), "(b b)");
+			equal(eval("(backquote ((unquote x)))").asString(), "((b b))");
 			equal(eval("(backquote (a (unquote x) c))").asString(), "(a (b b) c)");
 			equal(eval("(backquote (a ((unquote x)) c))").asString(), "(a ((b b)) c)");
 			
 			// TODO
+			//equal(eval("(backquote ((unquote-slice x)))").asString(), "(b b)");
 			//equal(eval("(backquote (a (unquote-slice x) c))").asString(), "(a b b c)");
 		});
 		
