@@ -386,7 +386,7 @@
 			equal(eval("(first (list 1 2 3))"), 1);
 			equal(eval("(rest (list 1 2 3))").asString(), "(2 3)");
 			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");
-			
+			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");			
 		});
 		
 		test("Evaluate Simple Expression with Atoms", function() {
@@ -436,6 +436,10 @@
 			equal(eval("((flambda (x) x) y)").asString(), "y");
 			eval("(define myquote (flambda (x) x))");
 			equal(eval("(myquote (x y))").asString(), "(x y)");
+		});
+		
+		test("Mlambda", function() {
+			equal(eval("((mlambda (x) (list 'quote x)) y)").asString(), "y");
 		});
 
 		function eval(text) {

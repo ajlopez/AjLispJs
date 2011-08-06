@@ -109,17 +109,36 @@ AjLisp = function() {
 	Closure.prototype.evaluate = Form.prototype.evaluate;
 	Closure.prototype.apply = Form.prototype.apply;
 		
-	function FormClosure(argnames, closureenv, body) {
-		body = new List(prognForm, body);
+	// function FormClosure(argnames, closureenv, body) {
+		// body = new List(prognForm, body);
 		
-		this.eval = function(args, environment) {
-			var newenv = makeEnvironment(argnames, args, closureenv);
-			return evaluate(body, newenv);
-		};
+		// this.eval = function(args, environment) {
+			// var newenv = makeEnvironment(argnames, args, closureenv);
+			// return evaluate(body, newenv);
+		// };
+	// }
+	
+	function FormClosure(argnames, closureenv, body)
+	{
+		Closure.prototype.constructor.call(this, argnames, closureenv, body);
 	}
 	
 	FormClosure.prototype.evaluate = SpecialForm.prototype.evaluate;
 	FormClosure.prototype.apply = SpecialForm.prototype.apply;
+		
+	function MacroClosure(argnames, closureenv, body)
+	{
+		body = new List(prognForm, body);
+		
+		this.eval = function(args, environment) {
+			var newenv = makeEnvironment(argnames, args, closureenv);
+			var value = evaluate(body, newenv);
+			return evaluate(value, environment);
+		};
+	}
+	
+	MacroClosure.prototype.evaluate = SpecialForm.prototype.evaluate;
+	MacroClosure.prototype.apply = SpecialForm.prototype.apply;
 		
 	function Environment(parent) {
 		function getParent() {
@@ -403,6 +422,14 @@ AjLisp = function() {
 		return new FormClosure(argnames, env, body);
 	}
 	
+	var mlambdaForm = new SpecialForm();
+	mlambdaForm.eval = function eval(list, env)
+	{
+		var argnames = list.first();
+		var body = list.rest();
+		return new MacroClosure(argnames, env, body);
+	}
+	
 	var quoteForm = new SpecialForm();
 	quoteForm.eval = function eval(list, env)
 	{
@@ -423,6 +450,7 @@ AjLisp = function() {
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
 	environment.flambda = flambdaForm;
+	environment.mlambda = mlambdaForm;
 	environment.let = letForm;
 	
 	environment.quote = quoteForm;
