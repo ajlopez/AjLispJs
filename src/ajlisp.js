@@ -573,7 +573,7 @@ AjLisp = function() {
 		{
 			var name = char;
 			
-			while ((char = nextChar()) != null && (isLetter(char) || isDigit(char)))
+			while ((char = nextChar()) != null && (isLetter(char) || isDigit(char)) || char === "-")
 				name += char;
 				
 			if (char != null)

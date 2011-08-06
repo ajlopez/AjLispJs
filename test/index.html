@@ -47,6 +47,32 @@
 )
 </div>	
 
+<div id="definem" style="display: none">
+(define definem (mlambda x (list 'define (first x) (cons 'mlambda (rest x)))))
+</div>	
+
+<div id="cond" style="display: none">
+(definem cond lst (if (nilp lst) nil (list 'if (first (first lst)) (cons 'do (rest (first lst))) (cons 'cond (rest lst)))))
+</div>	
+
+<div id="atomp" style="display: none">
+(define atomp (x) (cond ((nilp x) true) ((listp x) nil) (true true)))
+</div>	
+
+<div id="and" style="display: none">
+(definem and lst (if (nilp lst) true (list 'cond (list (first lst) (cons 'and (rest lst))) '(true nil))))
+</div>	
+
+<div id="backquote" style="display: none">
+(definem backquote (lst) (cond
+                ((nilp lst) nil)
+                ((atomp lst) (list 'quote lst))
+                ((equalp (first lst) 'unquote) (first (rest lst)))
+                ((and (listp (first lst)) (equalp (first (first lst)) 'unquote-slice)) (list 'append (first (rest (first lst))) (list 'backquote (rest lst))))
+                (true (list 'cons (list 'backquote (first lst)) (list 'backquote (rest lst))))
+                ))
+</div>				
+
 <script type="text/javascript">
 	$(function() {
 		test("First Test", function() {
@@ -494,6 +520,25 @@
 			equal(eval("(equalp '(1 2 3 4) '(1 2 3))"), false);
 			equal(eval("(equalp 1 1)"), true);
 			equal(eval("(equalp 1 2)"), false);
+		});
+		
+		test("Backquote", function() {
+			eval($("#append").html());
+			eval($("#definem").html());
+			eval($("#cond").html());
+			eval($("#atomp").html());
+			eval($("#and").html());
+			eval($("#backquote").html());
+			
+			equal(eval("(backquote (a b c))").asString(), "(a b c)");
+			equal(eval("(backquote (a (b c) d))").asString(), "(a (b c) d)");
+			
+			eval("(define x '(b b))");
+			equal(eval("(backquote (a (unquote x) c))").asString(), "(a (b b) c)");
+			equal(eval("(backquote (a ((unquote x)) c))").asString(), "(a ((b b)) c)");
+			
+			// TODO
+			//equal(eval("(backquote (a (unquote-slice x) c))").asString(), "(a b b c)");
 		});
 		
 		function eval(text) {
