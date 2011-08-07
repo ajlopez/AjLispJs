@@ -99,6 +99,9 @@
 			var list3 = AjLisp.makeList(1,2,3);
 			equal(list.equals(list3), false);
 			equal(list3.equals(list), false);
+			list = AjLisp.makeList(null, null);
+			ok(list.first() === null);
+			ok(list.rest().first() === null);
 		});
 		
 		test("Object Evaluate", function() {
@@ -198,7 +201,7 @@
 			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
 			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), 2);
 			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), 3);
-			var list = AjLisp.makeList(AjLisp.environment.do, list1, list2, list3);
+			var list = AjLisp.makeList(AjLisp.environment['do'], list1, list2, list3);
 			equal(list.evaluate(AjLisp.environment), 3);
 			equal(AjLisp.environment.one, 1);
 			equal(AjLisp.environment.two, 2);
@@ -433,6 +436,8 @@
 			equal(eval("(cons 1 (list 2 3))").asString(), "(1 2 3)");			
 			equal(eval("(cons 1 nil)").asString(), "(1)");			
 			equal(eval("(cons 1)").asString(), "(1)");			
+			ok(eval("(first '(nil nil))") === null);
+			ok(eval("(first (rest '(nil nil)))") === null);
 		});
 		
 		test("Evaluate Simple Expression with Atoms", function() {
@@ -470,6 +475,8 @@
 			eval($("#append").html());
 			equal(eval("(append (list 1 2) (list 3 4 5))").asString(), "(1 2 3 4 5)");
 			equal(eval("(append (list 1 2) nil)").asString(), "(1 2)");
+			eval("(define x '(b b))");
+			equal(eval("(append x nil)").asString(), "(b b)");
 		});
 
 		test("Evaluate mapcond", function() {
@@ -534,14 +541,15 @@
 			equal(eval("(backquote (a (b c) d))").asString(), "(a (b c) d)");
 			
 			eval("(define x '(b b))");
+			eval("(backquote nil)");
+			eval("(append x (backquote nil))");
 			equal(eval("(backquote (unquote x))").asString(), "(b b)");
 			equal(eval("(backquote ((unquote x)))").asString(), "((b b))");
 			equal(eval("(backquote (a (unquote x) c))").asString(), "(a (b b) c)");
 			equal(eval("(backquote (a ((unquote x)) c))").asString(), "(a ((b b)) c)");
 			
-			// TODO
-			//equal(eval("(backquote ((unquote-slice x)))").asString(), "(b b)");
-			//equal(eval("(backquote (a (unquote-slice x) c))").asString(), "(a b b c)");
+			equal(eval("(backquote ((unquote-slice x)))").asString(), "(b b)");
+			equal(eval("(backquote (a (unquote-slice x) c))").asString(), "(a b b c)");
 		});
 		
 		function eval(text) {

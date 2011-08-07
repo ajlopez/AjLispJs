@@ -17,7 +17,7 @@ AjLisp = function() {
 	List.prototype.isList = function() { return true; }
 	List.prototype.evaluate = function(environment) 
 	{
-		var form = this.first().evaluate(environment);
+		var form = this.first().evaluate(environment);		
 		return form.apply(this, environment);
 	}	
 	
@@ -164,14 +164,14 @@ AjLisp = function() {
 		function getValue(name) {
 			var value = this[name];
 			
-			if (value == undefined && this.parent() != null)
+			if (value === undefined && this.parent() != null)
 				return this.parent().getValue(name);
 				
 			return value;
 		}
 		
 		function setValue(name, value) {
-			if (value == undefined)
+			if (value === undefined)
 				return;
 				
 			this[name] = value;
@@ -184,7 +184,7 @@ AjLisp = function() {
 	
 	function evaluate(x, environment)
 	{
-		if (x == null || x == undefined)
+		if (x === null || x === undefined)
 			return x;
 			
 		if (x.evaluate != undefined && typeof(x.evaluate) == "function")
@@ -289,7 +289,7 @@ AjLisp = function() {
 
 	function isAtom(x) 
 	{
-		if (x == null)
+		if (x === null)
 			return true;
 			
 		if (x.isAtom != undefined && typeof(x.isAtom) == "function")
@@ -300,10 +300,10 @@ AjLisp = function() {
 	
 	function isList(x)
 	{
-		if (x == null)
+		if (x === null)
 			return true;
 			
-		if (x == undefined)
+		if (x === undefined)
 			return false;
 			
 		if (x.isList != undefined && typeof(x.isList)=="function")
@@ -314,7 +314,7 @@ AjLisp = function() {
 	
 	function isNil(x)
 	{
-		return x == null;
+		return x === null;
 	}
 	
 	function makeList() 
@@ -501,8 +501,8 @@ AjLisp = function() {
 	environment.first = firstForm;
 	environment.rest = restForm;
 	environment.cons = consForm;
-	environment.do = doForm;
-	environment.if = ifForm;
+	environment['do'] = doForm;
+	environment['if'] = ifForm;
 	
 	environment.define = defineForm;
 	environment.lambda = lambdaForm;
@@ -648,7 +648,7 @@ AjLisp = function() {
 		function parse() {
 			var token = lexer.nextToken();
 			
-			if (token == null)
+			if (token === null)
 				return null;
 				
 			if (token.type == TokenType.Name) {
