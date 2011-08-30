@@ -111,7 +111,11 @@ AjLisp = function() {
 	
 	SpecialForm.prototype.evaluate = function(environment) { return this; }
 	SpecialForm.prototype.apply = function(list, environment) 
-	{ return this.eval(list.rest(), environment); }
+	{ 
+		if (isNil(list)) return this.eval(list, environment);
+		
+		return this.eval(list.rest(), environment);
+	}
 	
 	function Closure(argnames, closureenv, body) {
 		body = new List(doForm, body);
@@ -125,15 +129,6 @@ AjLisp = function() {
 	Closure.prototype.evaluate = Form.prototype.evaluate;
 	Closure.prototype.apply = Form.prototype.apply;
 		
-	// function FormClosure(argnames, closureenv, body) {
-		// body = new List(doForm, body);
-		
-		// this.eval = function(args, environment) {
-			// var newenv = makeEnvironment(argnames, args, closureenv);
-			// return evaluate(body, newenv);
-		// };
-	// }
-	
 	function FormClosure(argnames, closureenv, body)
 	{
 		Closure.prototype.constructor.call(this, argnames, closureenv, body);
