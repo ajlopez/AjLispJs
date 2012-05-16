@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src="../src/ajlisp.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+function eval(text) {
+	var lexer = new ajlisp.Lexer(text);
+	var parser = new ajlisp.Parser(lexer);
+	var expr = parser.parse();
+	return ajlisp.evaluate(expr, ajlisp.environment);
+}
+
+function doInput()
+{
+	var text = document.getElementById("inputField").value;
+	var result = eval(text);
+
+	if (result == null)
+		return;
+		
+	if (result.asString)
+		result = result.asString();
+		
+	document.getElementById("outputField").value += result + "\r\n";
+}
+
+function doClear()
+{
+	document.getElementById("outputField").value = '';
+}
+ 
+function showExample(name)
+{
+	var example = document.getElementById(name).innerHTML;
+	document.getElementById("inputField").value = example;
+}
+</script>
+<style>
+ .example {
+	display: none;
+ }
+</style>
+</head>
+<body>
+<h1>AjLisp in Javascript</h1>
+<table style="width: 100%">
+<tr>
+<td style="width: 50%; vertical-align: top;">
+<textarea style="width: 100%" rows="10" id="inputField">
+</textarea>
+<br />
+<input type="button" onclick="doInput()" value="Evaluate"></input>
+</td>
+<td style="width: 50%; vertical-align: top;">
+<textarea style="width: 100%" rows="10" id="outputField">
+</textarea>
+<br />
+<input type="button" onclick="doClear()" value="Clear"></input>
+</td>
+</tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+	<li>
+		<a href='#' onclick='showExample("first")'>first</a>
+	</li>
+</ul>
+
+<div id='first' class='example'>
+(first '(a b))
+</div>
+<div>
+
+</body>
+</html>
