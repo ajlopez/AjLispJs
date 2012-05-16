@@ -1,5 +1,5 @@
 
-AjLisp = function() {
+ajlisp = function() {
 	function List(first, rest) {
 		function getFirst() {
 			return first;
@@ -707,11 +707,7 @@ AjLisp = function() {
 	}
 }();
 
-//Object.prototype.evaluate = function() { return this; };
-
-// String.prototype.evaluate = function(environment) { return this; };
-
-// Number.prototype.evaluate = function(environment) { return this; };
-
-// Date.prototype.evaluate = function(environment) { return this; };
+if (typeof(window) === 'undefined') {
+	module.exports = ajlisp;
+}
 

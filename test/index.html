@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="qunit.js"></script>
 </head>
 <body>
-	<h1 id="qunit-header">AjLisp Test Suite</h1>
+	<h1 id="qunit-header">ajlisp Test Suite</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>
@@ -75,46 +75,46 @@
 
 <script type="text/javascript">
 	$(function() {
-		test("AjLisp namespace", function() {
-			notEqual(AjLisp, undefined);
+		test("ajlisp namespace", function() {
+			notEqual(ajlisp, undefined);
 		});
 		
 		test("List", function() {
-			var list = new AjLisp.List(1,2);
+			var list = new ajlisp.List(1,2);
 			equals(list.first(), 1);
 			equals(list.rest(), 2);
 			equal(list.isAtom(),false);
 			equal(list.isList(),true);
-			equal(AjLisp.isAtom(list), false);
-			equal(AjLisp.isList(list), true);
+			equal(ajlisp.isAtom(list), false);
+			equal(ajlisp.isList(list), true);
 			equal(list.asString(), "(1.2)");
 			equal(list.equals(list), true);
-			var list2 = new AjLisp.List(1,2);
+			var list2 = new ajlisp.List(1,2);
 			equal(list.equals(list2), true);
 			equal(list2.equals(list), true);
-			var list3 = AjLisp.makeList(1,2,3);
+			var list3 = ajlisp.makeList(1,2,3);
 			equal(list.equals(list3), false);
 			equal(list3.equals(list), false);
-			list = AjLisp.makeList(null, null);
+			list = ajlisp.makeList(null, null);
 			ok(list.first() === null);
 			ok(list.rest().first() === null);
 		});
 		
 		test("Object Evaluate", function() {
-			var environment = new AjLisp.Environment();
+			var environment = new ajlisp.Environment();
 			var n = 1;
-			equals(AjLisp.evaluate(n, environment), 1);
+			equals(ajlisp.evaluate(n, environment), 1);
 			var m = 2;
-			equal(AjLisp.evaluate(m, environment), 2);
-			equal(AjLisp.evaluate("foo", environment), "foo");
+			equal(ajlisp.evaluate(m, environment), 2);
+			equal(ajlisp.evaluate("foo", environment), "foo");
 		});
 		
 		test("Top Environment", function() {
-			notEqual(AjLisp.environment, undefined);
+			notEqual(ajlisp.environment, undefined);
 		});
 		
 		test("Environment", function() {
-			var environment = new AjLisp.Environment();
+			var environment = new ajlisp.Environment();
 			equal(environment.parent(), null);
 			equal(environment.getValue("a"), undefined);
 			environment.setValue("one", 1);
@@ -122,8 +122,8 @@
 		});
 		
 		test("Parent Environment", function() {
-			var parent = new AjLisp.Environment();
-			var environment = new AjLisp.Environment(parent);
+			var parent = new ajlisp.Environment();
+			var environment = new ajlisp.Environment(parent);
 			equal(environment.parent(), parent);
 			equal(parent.parent(), null);
 			equal(environment.getValue("a"), undefined);
@@ -137,23 +137,23 @@
 		});
 		
 		test("Atom", function() {
-			var environment = new AjLisp.Environment();
+			var environment = new ajlisp.Environment();
 			environment.setValue("one", 1);
-			var one = new AjLisp.Atom("one");
+			var one = new ajlisp.Atom("one");
 			equal(one.evaluate(environment), 1);
 			ok(one.isAtom());
 			equal(one.isList(), false);
-			ok(AjLisp.isAtom(one));
-			equal(AjLisp.isList(one), false);
+			ok(ajlisp.isAtom(one));
+			equal(ajlisp.isList(one), false);
 			equal(one.asString(), "one");
 			equal(one.equals(one), true);
-			var one2 = new AjLisp.Atom("one");
+			var one2 = new ajlisp.Atom("one");
 			equal(one.equals(one2), true);
 		});
 		
 		test("ListForm simple apply", function() {
-			var list = new AjLisp.List(AjLisp.environment.list, new AjLisp.List(1, null));			
-			var result = AjLisp.environment.list.apply(list);			
+			var list = new ajlisp.List(ajlisp.environment.list, new ajlisp.List(1, null));			
+			var result = ajlisp.environment.list.apply(list);			
 			equal(result.first(), 1);
 			equal(result.rest(), null);			
 			var result2 = list.evaluate(null);			
@@ -162,23 +162,23 @@
 		});
 		
 		test("FirstForm simple apply", function() {
-			var list = AjLisp.makeList(AjLisp.environment.first, AjLisp.makeList(AjLisp.environment.list, 1));
-			var result = AjLisp.environment.first.apply(list);			
+			var list = ajlisp.makeList(ajlisp.environment.first, ajlisp.makeList(ajlisp.environment.list, 1));
+			var result = ajlisp.environment.first.apply(list);			
 			equal(result, 1);			
 			var result2 = list.evaluate(null);			
 			equal(result2, 1);
 		});
 		
 		test("RestForm simple apply", function() {
-			var list = AjLisp.makeList(AjLisp.environment.rest, AjLisp.makeList(AjLisp.environment.list, 1));
-			var result = AjLisp.environment.rest.apply(list);			
+			var list = ajlisp.makeList(ajlisp.environment.rest, ajlisp.makeList(ajlisp.environment.list, 1));
+			var result = ajlisp.environment.rest.apply(list);			
 			equal(result, null);			
 			var result2 = list.evaluate(null);			
 			equal(result2, null);
 		});
 		
 		test("MakeList", function() {
-			var list = AjLisp.makeList(1,2,3);
+			var list = ajlisp.makeList(1,2,3);
 			equal(list.asString(), "(1 2 3)");
 			
 			equal(list.first(), 1);
@@ -188,117 +188,117 @@
 		});
 		
 		test("Define", function() {
-			var list = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
-			equal(list.evaluate(AjLisp.environment), 1);
-			equal(AjLisp.environment.one, 1);
+			var list = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+			equal(list.evaluate(ajlisp.environment), 1);
+			equal(ajlisp.environment.one, 1);
 		});
 		
 		test("Do", function() {
-			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
-			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), 2);
-			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), 3);
-			var list = AjLisp.makeList(AjLisp.environment['do'], list1, list2, list3);
-			equal(list.evaluate(AjLisp.environment), 3);
-			equal(AjLisp.environment.one, 1);
-			equal(AjLisp.environment.two, 2);
-			equal(AjLisp.environment.three, 3);
+			var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+			var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
+			var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+			var list = ajlisp.makeList(ajlisp.environment['do'], list1, list2, list3);
+			equal(list.evaluate(ajlisp.environment), 3);
+			equal(ajlisp.environment.one, 1);
+			equal(ajlisp.environment.two, 2);
+			equal(ajlisp.environment.three, 3);
 		});
 		
 		test("Closure without parameters", function() {
-			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), 1);
-			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), 2);
-			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), 3);
-			var body = AjLisp.makeList(list1, list2, list3);
-			var closure = new AjLisp.Closure(null, AjLisp.environment, body);
-			equal(closure.apply(null, AjLisp.environment), 3);
-			equal(AjLisp.environment.one, 1);
-			equal(AjLisp.environment.two, 2);
-			equal(AjLisp.environment.three, 3);
+			var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+			var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
+			var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+			var body = ajlisp.makeList(list1, list2, list3);
+			var closure = new ajlisp.Closure(null, ajlisp.environment, body);
+			equal(closure.apply(null, ajlisp.environment), 3);
+			equal(ajlisp.environment.one, 1);
+			equal(ajlisp.environment.two, 2);
+			equal(ajlisp.environment.three, 3);
 		});
 		
 		test("Closure with parameters", function() {
-			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), new AjLisp.Atom("a"));
-			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), new AjLisp.Atom("b"));
-			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), new AjLisp.Atom("c"));
-			var body = AjLisp.makeList(list1, list2, list3);
-			var names = AjLisp.makeList(new AjLisp.Atom("a"), new AjLisp.Atom("b"), new AjLisp.Atom("c"));
-			var closure = new AjLisp.Closure(names, AjLisp.environment, body);
-			var list = AjLisp.makeList(closure,1,2,3);
-			equal(list.evaluate(AjLisp.environment), 3);
-			equal(AjLisp.environment.one, 1);
-			equal(AjLisp.environment.two, 2);
-			equal(AjLisp.environment.three, 3);
+			var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), new ajlisp.Atom("a"));
+			var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), new ajlisp.Atom("b"));
+			var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), new ajlisp.Atom("c"));
+			var body = ajlisp.makeList(list1, list2, list3);
+			var names = ajlisp.makeList(new ajlisp.Atom("a"), new ajlisp.Atom("b"), new ajlisp.Atom("c"));
+			var closure = new ajlisp.Closure(names, ajlisp.environment, body);
+			var list = ajlisp.makeList(closure,1,2,3);
+			equal(list.evaluate(ajlisp.environment), 3);
+			equal(ajlisp.environment.one, 1);
+			equal(ajlisp.environment.two, 2);
+			equal(ajlisp.environment.three, 3);
 		});
 		
 		test("Lambda with parameters", function() {
-			var list1 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("one"), new AjLisp.Atom("a"));
-			var list2 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("two"), new AjLisp.Atom("b"));
-			var list3 = AjLisp.makeList(AjLisp.environment.define, new AjLisp.Atom("three"), new AjLisp.Atom("c"));
-			var names = AjLisp.makeList(new AjLisp.Atom("a"), new AjLisp.Atom("b"), new AjLisp.Atom("c"));
-			var lambda = AjLisp.makeList(AjLisp.environment.lambda, names, list1, list2, list3);
-			var list = AjLisp.makeList(lambda,1,2,3);
-			equal(list.evaluate(AjLisp.environment), 3);
-			equal(AjLisp.environment.one, 1);
-			equal(AjLisp.environment.two, 2);
-			equal(AjLisp.environment.three, 3);
+			var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), new ajlisp.Atom("a"));
+			var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), new ajlisp.Atom("b"));
+			var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), new ajlisp.Atom("c"));
+			var names = ajlisp.makeList(new ajlisp.Atom("a"), new ajlisp.Atom("b"), new ajlisp.Atom("c"));
+			var lambda = ajlisp.makeList(ajlisp.environment.lambda, names, list1, list2, list3);
+			var list = ajlisp.makeList(lambda,1,2,3);
+			equal(list.evaluate(ajlisp.environment), 3);
+			equal(ajlisp.environment.one, 1);
+			equal(ajlisp.environment.two, 2);
+			equal(ajlisp.environment.three, 3);
 		});
 		
 		test("Lexer Simple Token", function() {
 			var lexer;
 			var token;
 			
-			lexer = new AjLisp.Lexer("");
+			lexer = new ajlisp.Lexer("");
 			equal(lexer.nextToken(), null);
 
-			lexer = new AjLisp.Lexer("a");
+			lexer = new ajlisp.Lexer("a");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, "a");
-			equal(token.type, AjLisp.TokenType.Name);
+			equal(token.type, ajlisp.TokenType.Name);
 
-			lexer = new AjLisp.Lexer("name");
+			lexer = new ajlisp.Lexer("name");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, "name");
-			equal(token.type, AjLisp.TokenType.Name);
+			equal(token.type, ajlisp.TokenType.Name);
 
-			lexer = new AjLisp.Lexer("name2");
+			lexer = new ajlisp.Lexer("name2");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, "name2");
-			equal(token.type, AjLisp.TokenType.Name);
+			equal(token.type, ajlisp.TokenType.Name);
 
-			lexer = new AjLisp.Lexer("'");
+			lexer = new ajlisp.Lexer("'");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, "'");
-			equal(token.type, AjLisp.TokenType.Name);
+			equal(token.type, ajlisp.TokenType.Name);
 
-			lexer = new AjLisp.Lexer("123");
+			lexer = new ajlisp.Lexer("123");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, 123);
-			equal(token.type, AjLisp.TokenType.Number);
+			equal(token.type, ajlisp.TokenType.Number);
 
-			lexer = new AjLisp.Lexer("123.45");
+			lexer = new ajlisp.Lexer("123.45");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, 123.45);
-			equal(token.type, AjLisp.TokenType.Number);
+			equal(token.type, ajlisp.TokenType.Number);
 			equal(typeof (token.value), "number");
 
-			lexer = new AjLisp.Lexer("(");
+			lexer = new ajlisp.Lexer("(");
 			token = lexer.nextToken();
 			notEqual(token, null);
 			equal(token.value, "(");
-			equal(token.type, AjLisp.TokenType.Separator);
+			equal(token.type, ajlisp.TokenType.Separator);
 		});
 		
 		test("Lexer Multiple Tokens", function() {
 			var lexer;
 			var token;
 			
-			lexer = new AjLisp.Lexer("(list 1 2 3)");
+			lexer = new ajlisp.Lexer("(list 1 2 3)");
 			
 			token = lexer.nextToken();
 			isSeparator(token, "(");
@@ -316,16 +316,16 @@
 			equal(token, null);
 			
 			function isSeparator(token, expected) {
-				return isToken(token, expected, AjLisp.TokenType.Separator);
+				return isToken(token, expected, ajlisp.TokenType.Separator);
 			}
 			
 			function isName(token, expected) {
-				return isToken(token, expected, AjLisp.TokenType.Name);
+				return isToken(token, expected, ajlisp.TokenType.Name);
 			}
 			
 			function isNumber(token, expected) {
 				equal(typeof token.value, "number");
-				return isToken(token, expected, AjLisp.TokenType.Number);
+				return isToken(token, expected, ajlisp.TokenType.Number);
 			}
 			
 			function isToken(token, value, type) {
@@ -340,16 +340,16 @@
 			var parser;
 			var expr;
 			
-			lexer = new AjLisp.Lexer("a");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("a");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
 			notEqual(expr, null);
 			equal(expr.isAtom(), true);
 			
-			lexer = new AjLisp.Lexer("(1 2 3)");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("(1 2 3)");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
@@ -357,8 +357,8 @@
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(1 2 3)");
 			
-			lexer = new AjLisp.Lexer("(list (add 1 2 3) a b c)");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("(list (add 1 2 3) a b c)");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
@@ -366,29 +366,29 @@
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(list (add 1 2 3) a b c)");
 			
-			lexer = new AjLisp.Lexer("nil");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("nil");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
 			equal(expr, null);
 
-			lexer = new AjLisp.Lexer("false");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("false");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
 			equal(expr, false);
 
-			lexer = new AjLisp.Lexer("true");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("true");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
 			equal(expr, true);
 
-			lexer = new AjLisp.Lexer("(nil nil nil)");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("(nil nil nil)");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
@@ -396,8 +396,8 @@
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(nil nil nil)");
 
-			lexer = new AjLisp.Lexer($("#mapfirst").html());
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer($("#mapfirst").html());
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 		});
@@ -407,15 +407,15 @@
 			var parser;
 			var expr;
 			
-			lexer = new AjLisp.Lexer("'a");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("'a");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
 			equal(expr.asString(), "'a");
 			
-			lexer = new AjLisp.Lexer("(quote a)");
-			parser = new AjLisp.Parser(lexer);
+			lexer = new ajlisp.Lexer("(quote a)");
+			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
 			
@@ -549,11 +549,11 @@
 		});
 		
 		function eval(text) {
-			var lexer = new AjLisp.Lexer(text);
-			var parser = new AjLisp.Parser(lexer);
+			var lexer = new ajlisp.Lexer(text);
+			var parser = new ajlisp.Parser(lexer);
 			var expr = parser.parse();
 			equal(parser.parse(), null);
-			return AjLisp.evaluate(expr, AjLisp.environment);
+			return ajlisp.evaluate(expr, ajlisp.environment);
 		}
 	});
 </script>
