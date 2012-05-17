@@ -62,3 +62,17 @@ exports['Define Form Evaluate'] = function(test) {
 	test.done();
 };
 
+exports['Do Form Evaluate'] = function(test) {
+	var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+	var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
+	var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+	var list = ajlisp.makeList(ajlisp.environment['do'], list1, list2, list3);
+	
+	test.equal(list.evaluate(ajlisp.environment), 3);
+	test.equal(ajlisp.environment.one, 1);
+	test.equal(ajlisp.environment.two, 2);
+	test.equal(ajlisp.environment.three, 3);
+	
+	test.done();
+};
+
