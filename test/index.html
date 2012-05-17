@@ -301,13 +301,19 @@
 			notEqual(token, null);
 			equal(token.value, "(");
 			equal(token.type, ajlisp.TokenType.Separator);
+
+			lexer = new ajlisp.Lexer('"foo"');
+			token = lexer.nextToken();
+			notEqual(token, null);
+			equal(token.value, "foo");
+			equal(token.type, ajlisp.TokenType.String);
 		});
 		
 		test("Lexer Multiple Tokens", function() {
 			var lexer;
 			var token;
 			
-			lexer = new ajlisp.Lexer("(list 1 2 3)");
+			lexer = new ajlisp.Lexer('(list 1 "2" 3)');
 			
 			token = lexer.nextToken();
 			isSeparator(token, "(");
@@ -316,7 +322,7 @@
 			token = lexer.nextToken();
 			isNumber(token, 1);
 			token = lexer.nextToken();
-			isNumber(token, 2);
+			isString(token, "2");
 			token = lexer.nextToken();
 			isNumber(token, 3);
 			token = lexer.nextToken();
@@ -335,6 +341,11 @@
 			function isNumber(token, expected) {
 				equal(typeof token.value, "number");
 				return isToken(token, expected, ajlisp.TokenType.Number);
+			}
+			
+			function isString(token, expected) {
+				equal(typeof token.value, "string");
+				return isToken(token, expected, ajlisp.TokenType.String);
 			}
 			
 			function isToken(token, value, type) {
@@ -374,6 +385,15 @@
 			notEqual(expr, null);
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(list (add 1 2 3) a b c)");
+			
+			lexer = new ajlisp.Lexer('(list "a" "b")');
+			parser = new ajlisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isList(), true);
+			equal(expr.first(), "a");
 			
 			lexer = new ajlisp.Lexer("nil");
 			parser = new ajlisp.Parser(lexer);

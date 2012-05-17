@@ -213,6 +213,9 @@ ajlisp = function() {
 		if (isList(value))
 			return value.asString();
 			
+		if (typeof value == "string")
+			return '"' + value + '"';
+			
 		return value+"";
 	}
 	
@@ -552,6 +555,9 @@ ajlisp = function() {
 				
 			if (isDigit(char))
 				return nextNumber(char);
+
+			if (char == '"')
+				return nextString();
 				
 			if (char == "'")
 				return new Token(char, TokenType.Name);
@@ -589,6 +595,16 @@ ajlisp = function() {
 				position--;
 				
 			return new Token(name, TokenType.Name);
+		}
+		
+		function nextString()
+		{
+			var value = '';
+			
+			while ((char = nextChar()) != null && char !== '"')
+				value += char;
+				
+			return new Token(value, TokenType.String);
 		}
 		
 		function nextNumber(char)
@@ -646,7 +662,7 @@ ajlisp = function() {
 		this.type = type;
 	}
 	
-	var TokenType = { Name: 0, Number:1, Separator:2 };
+	var TokenType = { Name: 0, Number:1, Separator:2, String:3 };
 	
 	// Parser
 	
@@ -676,7 +692,7 @@ ajlisp = function() {
 			if (token.type == TokenType.Separator && token.value == "(")
 				return parseListRest();
 				
-			if (token.type == TokenType.Number)
+			if (token.type == TokenType.Number || token.type == TokenType.String)
 				return token.value;
 				
 			throw "Invalid token: " + token.value;
