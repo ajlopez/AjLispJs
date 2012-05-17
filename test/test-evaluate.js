@@ -76,3 +76,20 @@ exports['Do Form Evaluate'] = function(test) {
 	test.done();
 };
 
+exports['Closure Form Evaluate with Parameters'] = function(test) {
+	var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), new ajlisp.Atom("a"));
+	var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), new ajlisp.Atom("b"));
+	var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), new ajlisp.Atom("c"));
+	var body = ajlisp.makeList(list1, list2, list3);
+	var names = ajlisp.makeList(new ajlisp.Atom("a"), new ajlisp.Atom("b"), new ajlisp.Atom("c"));
+	var closure = new ajlisp.Closure(names, ajlisp.environment, body);
+	var list = ajlisp.makeList(closure,1,2,3);
+	
+	test.equal(list.evaluate(ajlisp.environment), 3);
+	test.equal(ajlisp.environment.one, 1);
+	test.equal(ajlisp.environment.two, 2);
+	test.equal(ajlisp.environment.three, 3);
+	
+	test.done();
+};
+
