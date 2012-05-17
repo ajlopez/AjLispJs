@@ -53,3 +53,12 @@ exports['Rest Form Evaluate'] = function(test) {
 	test.done();
 };
 
+exports['Define Form Evaluate'] = function(test) {
+	var list = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+	
+	test.equal(list.evaluate(ajlisp.environment), 1);
+	test.equal(ajlisp.environment.one, 1);
+	
+	test.done();
+};
+
