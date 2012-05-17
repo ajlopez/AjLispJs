@@ -68,6 +68,20 @@ ajlisp = function() {
 		return result + "." + asString(rest) + ")";
 	}
 	
+	List.prototype.asArray = function()
+	{
+		var rest = this.rest();
+		
+		if (rest === null)
+			return [this.first()];
+		
+		var result = rest.asArray();
+		
+		result.unshift(this.first());
+		
+		return result;
+	}
+	
 	function Atom(name) {
 		this.evaluate = function(environment) {
 			return environment.getValue(name);

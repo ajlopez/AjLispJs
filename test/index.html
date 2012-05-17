@@ -100,6 +100,15 @@
 			ok(list.rest().first() === null);
 		});
 		
+		test("List as Array", function() {
+			var list = ajlisp.makeList(1,2,3);
+			var result = list.asArray();
+			equal(3, result.length);
+			equal(1, result[0]);
+			equal(2, result[1]);
+			equal(3, result[2]);
+		});
+		
 		test("Object Evaluate", function() {
 			var environment = new ajlisp.Environment();
 			var n = 1;

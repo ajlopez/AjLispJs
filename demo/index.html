@@ -6,22 +6,32 @@
 function eval(text) {
 	var lexer = new ajlisp.Lexer(text);
 	var parser = new ajlisp.Parser(lexer);
-	var expr = parser.parse();
-	return ajlisp.evaluate(expr, ajlisp.environment);
+	var result = null;
+	for (var expr = parser.parse(); expr !== null; expr = parser.parse())
+		result = ajlisp.evaluate(expr, ajlisp.environment);
+	
+	return result;
 }
 
 function doInput()
 {
 	var text = document.getElementById("inputField").value;
-	var result = eval(text);
+	
+	try {
+		var result = eval(text);
 
-	if (result == null)
-		return;
-		
-	if (result.asString)
-		result = result.asString();
-		
-	document.getElementById("outputField").value += result + "\r\n";
+		if (result == null)
+			return;
+			
+		if (result.asString)
+			result = result.asString();
+			
+		document.getElementById("outputField").value += result + "\r\n";
+	}
+	catch (e)
+	{
+		alert(e);
+	}
 }
 
 function doClear()
