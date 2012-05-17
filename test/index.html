@@ -599,6 +599,13 @@
 			equal(eval("(backquote (a (unquote-slice x) c))").asString(), "(a b b c)");
 		});
 		
+		test("Evaluate Text", function() {            
+			equal(ajlisp.evaluateText("(equalp 'one 'one)"), true);
+			equal(ajlisp.evaluateText("(equalp '(1 2 3) '(1 2 3))"), true);
+			equal(ajlisp.evaluateText("((flambda (x) x) y)").asString(), "y");
+			equal(ajlisp.evaluateText("(define myquote (flambda (x) x)) (myquote (x y))").asString(), "(x y)");
+		});
+		
 		function eval(text) {
 			var lexer = new ajlisp.Lexer(text);
 			var parser = new ajlisp.Parser(lexer);

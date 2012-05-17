@@ -196,11 +196,27 @@ ajlisp = function() {
 		if (x === null || x === undefined)
 			return x;
 			
-		if (x.evaluate != undefined && typeof(x.evaluate) == "function")
+		if (x.evaluate)
 			return x.evaluate(environment);
 			
 		return x;
 	}
+    
+    function evaluateText(text, env)
+    {
+        if (!env)
+            env = environment;
+            
+        var lexer = new Lexer(text);
+        var parser = new Parser(lexer);
+        
+        var result = null;
+        
+        for (var expr = parser.parse(); expr !== null; expr = parser.parse())
+            result = evaluate(expr, env);
+        
+        return result;        
+    }
 	
 	function asString(value)
 	{
@@ -731,6 +747,7 @@ ajlisp = function() {
 		isNil: isNil,
 		asString: asString,
 		evaluate: evaluate,
+        evaluateText: evaluateText,
 		
 		// Top Environment
 		environment: environment
