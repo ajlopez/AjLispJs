@@ -386,15 +386,6 @@
 			equal(expr.isList(), true);
 			equal(expr.asString(), "(list (add 1 2 3) a b c)");
 			
-			lexer = new ajlisp.Lexer('(list "a" "b")');
-			parser = new ajlisp.Parser(lexer);
-			
-			expr = parser.parse();
-			
-			notEqual(expr, null);
-			equal(expr.isList(), true);
-			equal(expr.first(), "a");
-			
 			lexer = new ajlisp.Lexer("nil");
 			parser = new ajlisp.Parser(lexer);
 			
@@ -429,6 +420,37 @@
 			parser = new ajlisp.Parser(lexer);
 			
 			expr = parser.parse();
+		});
+
+		test("Parser String", function() {
+			var lexer;
+			var parser;
+			var expr;
+			
+			lexer = new ajlisp.Lexer('"a"');
+			parser = new ajlisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+            ok(typeof expr === "string");
+			
+			lexer = new ajlisp.Lexer('(list "a" "b")');
+			parser = new ajlisp.Parser(lexer);
+			
+			expr = parser.parse();
+			
+			notEqual(expr, null);
+			equal(expr.isList(), true);
+			ok(expr.first().isAtom());
+            
+            var second = expr.rest().first();
+            ok(typeof second === 'string');
+            equal(second, "a");
+            
+            var third = expr.rest().rest().first();
+            ok(typeof third == 'string');
+            equal(third, "b");
 		});
 
 		test("Parse Quote", function() {
