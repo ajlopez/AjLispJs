@@ -17,3 +17,18 @@ exports['Invoke String Native slice'] = function(test) {
 	test.done();
 }
 
+
+exports['Invoke String Native length'] = function(test) {
+	var result = ajlisp.evaluateText('(.length "foo")');
+	
+	test.equal(result, 3);
+	
+	test.done();
+}
+
+exports['Global in Environment'] = function(test) {
+	test.equal(ajlisp.environment.global, global);
+	
+	test.done();
+}
+
