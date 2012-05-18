@@ -40,3 +40,16 @@ exports['Process Atom Name'] = function(test) {
 	test.done();
 }
 
+exports['Process Atom Special Name'] = function(test) {
+	var lexer = new ajlisp.Lexer('+');
+	var token = lexer.nextToken();
+	
+	test.notEqual(token, null);
+	test.equal(token.type, ajlisp.TokenType.Name);
+	test.equal(token.value, "+");
+	
+	test.equal(lexer.nextToken(), null);
+
+	test.done();
+}
+
