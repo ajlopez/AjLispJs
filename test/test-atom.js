@@ -21,3 +21,16 @@ exports['Create and Evaluate Atom'] = function(test) {
 	test.done();
 };
 
+exports['Create and Evaluate Dotted Atom'] = function(test) {
+	var environment = new ajlisp.Environment();
+	var atom = new ajlisp.Atom(".toUpperCase");
+	
+	test.notEqual(atom.evaluate(environment), null);
+	test.equal(atom.asString(), ".toUpperCase");
+	test.ok(atom.value);
+	test.equal(atom.evaluate(environment), atom.value);
+	test.ok(atom.value.eval);
+		
+	test.done();
+};
+
