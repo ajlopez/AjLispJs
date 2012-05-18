@@ -87,6 +87,9 @@ function showExample(name)
 	<li>
 		<a href='#' onclick='showExample("alert")'>native alert</a>
 	</li>
+	<li>
+		<a href='#' onclick='showExample("domhello")'>DOM hello</a>
+	</li>
 </ul>
 
 <div id='first' class='example'>
@@ -120,6 +123,14 @@ function showExample(name)
 </div>
 <div id='alert' class='example'>
 (.alert global "Hello, World")
+</div>
+<div id='domhello' class='example'>
+(define document (.document global))
+(define body (.body document))
+(define newdiv (.createElement document "div"))
+(define newcontent (.createTextNode document "Hello, world"))
+(.appendChild newdiv newcontent)
+(.appendChild body newdiv)
 </div>
 <div>
 
