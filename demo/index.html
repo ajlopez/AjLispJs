@@ -78,6 +78,12 @@ function showExample(name)
 	<li>
 		<a href='#' onclick='showExample("lambda")'>lambda</a>
 	</li>
+	<li>
+		<a href='#' onclick='showExample("factorial")'>factorial</a>
+	</li>
+	<li>
+		<a href='#' onclick='showExample("map")'>map</a>
+	</li>
 </ul>
 
 <div id='first' class='example'>
@@ -85,6 +91,29 @@ function showExample(name)
 </div>
 <div id='lambda' class='example'>
 ((lambda (x) (+ x 1)) 1)
+</div>
+<div id='factorial' class='example'>
+(define factorial (n)
+	(if (equalp n 0) 
+		1 
+		(* n (factorial (- n 1)))
+	)
+)
+
+(factorial 10)
+</div>
+<div id='map' class='example'>
+(define map (fn lst)
+  (if (nilp lst)
+    nil
+    (cons
+      (fn (first lst))
+      (map fn (rest lst))
+    )
+  )
+)
+
+(map (lambda (x) (+ x 1)) '(1 2 3))
 </div>
 <div>
 
