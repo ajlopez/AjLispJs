@@ -76,3 +76,52 @@ exports['Evaluate Divide'] = function(test) {
 	test.done();
 };
 
+exports['Evaluate Equals with Integers'] = function(test) {
+	test.ok(eval("(= 1 1)"));
+	test.ok(!eval("(= 1 2)"));
+	
+	test.done();
+};
+
+exports['Evaluate Equals with Strings'] = function(test) {
+	test.ok(eval('(= "foo" "foo")'));
+	test.ok(!eval('(= "foo" "bar")'));
+	
+	test.done();
+};
+
+exports['Evaluate Equals with Lists'] = function(test) {
+	test.ok(eval("(= '(1 2) '(1 2))"));
+	test.ok(!eval("(= '(1 2) '(1 2 3))"));
+	
+	test.done();
+};
+
+exports['Evaluate Less Than with Integers'] = function(test) {
+	test.ok(!eval("(< 1 1)"));
+	test.ok(eval("(< 1 2)"));
+	
+	test.done();
+};
+
+exports['Evaluate Less Than with Strings'] = function(test) {
+	test.ok(!eval('(< "foo" "foo")'));
+	test.ok(eval('(< "bar" "foo")'));
+	
+	test.done();
+};
+
+exports['Evaluate Greater Than with Integers'] = function(test) {
+	test.ok(!eval("(> 1 1)"));
+	test.ok(eval("(> 2 1)"));
+	
+	test.done();
+};
+
+exports['Evaluate Greater Than with Strings'] = function(test) {
+	test.ok(!eval('(> "foo" "foo")'));
+	test.ok(eval('(> "foo" "bar")'));
+	
+	test.done();
+};
+
