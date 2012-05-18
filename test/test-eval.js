@@ -58,3 +58,21 @@ exports['Evaluate Subtract'] = function(test) {
 	test.done();
 };
 
+exports['Evaluate Multiply'] = function(test) {
+	var result = eval("(* 1 2 3)");
+	
+	test.ok(result);
+	test.equal(result, 6);
+	
+	test.done();
+};
+
+exports['Evaluate Divide'] = function(test) {
+	var result = eval("(/ 1 2)");
+	
+	test.ok(result);
+	test.equal(result, 1/2);
+	
+	test.done();
+};
+
