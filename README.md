@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/ajlopez/AjLispJs.png)](http://travis-ci.org/ajlopez/AjLispJs)
 # AjLispJs
 
 Lisp interpreter written in Javascript, using TDD (QUnit).
