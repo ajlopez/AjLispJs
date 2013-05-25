@@ -1,11 +1,11 @@
 { "name": "ajlisp"
 , "description": "Lisp interpreter implemented in Javascript, for browser and Node.js"
 , "keywords": [ "lisp", "nodejs", "javascript", "browser" ]
-, "version": "0.0.1-alfa"
+, "version": "0.0.1"
 , "author": "Angel 'Java' Lopez <webmaster@ajlopez.com> (http://www.ajlopez.com)"
 , "repository": { "type": "git", "url": "git://github.com/ajlopez/AjLispJs.git" }
 , "main": "./lib/ajlisp.js"
-, "engines": { "node": ">= 0.6.0 && < 0.9.0" }
+, "engines": { "node": ">= 0.6.0 && < 0.11.0" }
 , "scripts": {
     "test": "nodeunit test"
   }
