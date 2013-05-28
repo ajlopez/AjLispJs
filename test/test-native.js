@@ -17,11 +17,27 @@ exports['Invoke String Native slice'] = function(test) {
 	test.done();
 }
 
-
 exports['Invoke String Native length'] = function(test) {
 	var result = ajlisp.evaluateText('(.length "foo")');
 	
 	test.equal(result, 3);
+	
+	test.done();
+}
+
+exports['Evaluate global'] = function(test) {
+	var result = ajlisp.evaluateText('global');
+	
+	test.equal(result, global);
+	
+	test.done();
+}
+
+exports['Invoke Require'] = function(test) {
+	var result = ajlisp.evaluateText('(.require global "net")');
+    var net = require('net');
+	
+	test.equal(result, net);
 	
 	test.done();
 }
