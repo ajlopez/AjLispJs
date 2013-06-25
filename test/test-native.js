@@ -1,6 +1,8 @@
 
 var ajlisp = require('../lib/ajlisp');
 
+ajlisp.environment.module = module;
+
 exports['Invoke String Native toUpperCase'] = function(test) {
 	var result = ajlisp.evaluateText('(.toUpperCase "foo")');
 	
@@ -33,8 +35,16 @@ exports['Evaluate global'] = function(test) {
 	test.done();
 }
 
+exports['Evaluate module'] = function(test) {
+	var result = ajlisp.evaluateText('module');
+	
+	test.equal(result, module);
+	
+	test.done();
+}
+
 exports['Invoke Require'] = function(test) {
-	var result = ajlisp.evaluateText('(.require global "net")');
+	var result = ajlisp.evaluateText('(.require module "net")');
     var net = require('net');
 	
 	test.equal(result, net);
