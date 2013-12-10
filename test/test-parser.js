@@ -2,8 +2,7 @@
 var ajlisp = require('../lib/ajlisp');
 
 exports['Parse Integer'] = function(test) {
-	var lexer = new ajlisp.Lexer("123");
-	var parser = new ajlisp.Parser(lexer);
+	var parser = ajlisp.createParser("123");
 
 	var expr = parser.parse();
 	
@@ -14,8 +13,7 @@ exports['Parse Integer'] = function(test) {
 }
 
 exports['Parse String'] = function(test) {
-	var lexer = new ajlisp.Lexer('"foo"');
-	var parser = new ajlisp.Parser(lexer);
+	var parser = ajlisp.createParser('"foo"');
 
 	var expr = parser.parse();
 	
@@ -26,8 +24,7 @@ exports['Parse String'] = function(test) {
 }
 
 exports['Parse Atom'] = function(test) {
-	var lexer = new ajlisp.Lexer("a");
-	var parser = new ajlisp.Parser(lexer);
+	var parser = ajlisp.createParser('a');
 
 	var expr = parser.parse();
 	
@@ -39,9 +36,8 @@ exports['Parse Atom'] = function(test) {
 }
 
 exports['Parse Dotted Atom'] = function(test) {
-	var lexer = new ajlisp.Lexer(".parseInt");
-	var parser = new ajlisp.Parser(lexer);
-
+    var parser = ajlisp.createParser('.parseInt');
+    
 	var expr = parser.parse();
 	
 	test.notEqual(expr, null);
@@ -52,8 +48,7 @@ exports['Parse Dotted Atom'] = function(test) {
 }
 
 exports['Parse List'] = function(test) {
-	var lexer = new ajlisp.Lexer("(1 2 3)");
-	var parser = new ajlisp.Parser(lexer);
+	var parser = ajlisp.createParser('(1 2 3)');
 
 	var expr = parser.parse();
 	
