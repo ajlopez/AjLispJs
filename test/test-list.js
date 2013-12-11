@@ -1,23 +1,21 @@
 
-var ajlisp = require('../lib/ajlisp');
+var lists = require('../lib/lists');
 
 exports['Dotted List'] = function(test) {
-    var list = new ajlisp.List(1,2);
+    var list = lists.createList(1,2);
 
     test.equal(list.first(), 1);
     test.equal(list.rest(), 2);
     test.equal(list.isAtom(),false);
     test.equal(list.isList(),true);
-    test.equal(ajlisp.isAtom(list), false);
-    test.equal(ajlisp.isList(list), true);
     test.equal(list.asString(), "(1.2)");
 	
 	test.done();
 };
 
 exports['Compare Dotted Lists'] = function(test) {
-    var list = new ajlisp.List(1,2);
-	var list2 = new ajlisp.List(1,2);
+    var list = lists.createList(1,2);
+	var list2 = lists.createList(1,2);
 
     test.equal(list.equals(list2), true);
     test.equal(list2.equals(list), true);
@@ -26,7 +24,7 @@ exports['Compare Dotted Lists'] = function(test) {
 };
 
 exports['Make List'] = function(test) {
-	var list = ajlisp.makeList(1,2,3);
+	var list = lists.makeList(1,2,3);
     
     test.ok(list.isList());
     test.equal(list.first(), 1);
@@ -37,7 +35,7 @@ exports['Make List'] = function(test) {
 };
 
 exports['Make List with Nulls'] = function(test) {
-	var list = ajlisp.makeList(null, null);
+	var list = lists.makeList(null, null);
     
     test.ok(list.isList());
     test.equal(list.first(), null);
@@ -47,7 +45,7 @@ exports['Make List with Nulls'] = function(test) {
 };
 
 exports['List as Array'] = function(test) {
-	var list = ajlisp.makeList(1,2,3);
+	var list = lists.makeList(1,2,3);
     var result = list.asArray();
     
     test.ok(result);
