@@ -1,8 +1,9 @@
 
-var ajlisp = require('../lib/ajlisp');
+var ajlisp = require('../lib/ajlisp'),
+    lists = require('../lib/lists');
 
 exports['List Form Apply'] = function(test) {
-	var list = new ajlisp.List(ajlisp.environment.list, new ajlisp.List(1, null));			
+	var list = lists.createList(ajlisp.environment.list, lists.createList(1, null));			
 	var result = ajlisp.environment.list.apply(list);
 	
 	test.equal(result.first(), 1);
@@ -12,7 +13,7 @@ exports['List Form Apply'] = function(test) {
 };
 
 exports['First Form Apply'] = function(test) {
-	var list = ajlisp.makeList(ajlisp.environment.first, ajlisp.makeList(ajlisp.environment.list, 1));
+	var list = lists.makeList(ajlisp.environment.first, lists.makeList(ajlisp.environment.list, 1));
 	var result = ajlisp.environment.first.apply(list);			
 	
 	test.equal(result, 1);
@@ -21,7 +22,7 @@ exports['First Form Apply'] = function(test) {
 };
 
 exports['Rest Form Apply'] = function(test) {
-	var list = ajlisp.makeList(ajlisp.environment.rest, ajlisp.makeList(ajlisp.environment.list, 1));
+	var list = lists.makeList(ajlisp.environment.rest, lists.makeList(ajlisp.environment.list, 1));
 	var result = ajlisp.environment.rest.apply(list);
 	
 	test.equal(result, null);			
@@ -30,10 +31,10 @@ exports['Rest Form Apply'] = function(test) {
 };
 
 exports['Closure Form Apply wo/Parameters'] = function(test) {
-	var list1 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
-	var list2 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
-	var list3 = ajlisp.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
-	var body = ajlisp.makeList(list1, list2, list3);
+	var list1 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+	var list2 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
+	var list3 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+	var body = lists.makeList(list1, list2, list3);
 	var closure = new ajlisp.Closure(null, ajlisp.environment, body);
 	
 	test.equal(closure.apply(null, ajlisp.environment), 3);

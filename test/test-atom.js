@@ -1,5 +1,6 @@
 
-var ajlisp = require('../lib/ajlisp');
+var ajlisp = require('../lib/ajlisp'),
+    functions = require('../lib/functions');
 
 exports['Create and Evaluate Atom'] = function(test) {
 	var environment = new ajlisp.Environment();
@@ -9,8 +10,8 @@ exports['Create and Evaluate Atom'] = function(test) {
 	test.equal(one.evaluate(environment), 1);
 	test.ok(one.isAtom());
 	test.equal(one.isList(), false);
-	test.ok(ajlisp.isAtom(one));
-	test.equal(ajlisp.isList(one), false);
+	test.ok(functions.isAtom(one));
+	test.equal(functions.isList(one), false);
 	test.equal(one.asString(), "one");
 	test.equal(one.equals(one), true);
 	
