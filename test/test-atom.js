@@ -1,10 +1,11 @@
 
-var ajlisp = require('../lib/ajlisp'),
+var atoms = require('../lib/atoms'),
+    ajlisp = require('../lib/ajlisp'),
     functions = require('../lib/functions');
 
 exports['Create and Evaluate Atom'] = function(test) {
 	var environment = new ajlisp.Environment();
-	var one = new ajlisp.Atom("one");
+	var one = atoms.createAtom("one");
 	
 	environment.setValue("one", 1);
 	test.equal(one.evaluate(environment), 1);
@@ -15,7 +16,7 @@ exports['Create and Evaluate Atom'] = function(test) {
 	test.equal(one.asString(), "one");
 	test.equal(one.equals(one), true);
 	
-	var one2 = new ajlisp.Atom("one");
+	var one2 = atoms.createAtom("one");
 	
 	test.equal(one.equals(one2), true);
 	
@@ -24,7 +25,7 @@ exports['Create and Evaluate Atom'] = function(test) {
 
 exports['Create and Evaluate Dotted Atom'] = function(test) {
 	var environment = new ajlisp.Environment();
-	var atom = new ajlisp.Atom(".toUpperCase");
+	var atom = atoms.createAtom(".toUpperCase");
 	
 	test.notEqual(atom.evaluate(environment), null);
 	test.equal(atom.asString(), ".toUpperCase");
