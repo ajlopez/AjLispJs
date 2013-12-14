@@ -1,5 +1,6 @@
 
 var ajlisp = require('../lib/ajlisp'),
+    atoms = require('../lib/atoms'),
     lists = require('../lib/lists');
 
 exports['List Form Apply'] = function(test) {
@@ -31,9 +32,9 @@ exports['Rest Form Apply'] = function(test) {
 };
 
 exports['Closure Form Apply wo/Parameters'] = function(test) {
-	var list1 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
-	var list2 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
-	var list3 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+	var list1 = lists.makeList(ajlisp.environment.define, atoms.createAtom("one"), 1);
+	var list2 = lists.makeList(ajlisp.environment.define, atoms.createAtom("two"), 2);
+	var list3 = lists.makeList(ajlisp.environment.define, atoms.createAtom("three"), 3);
 	var body = lists.makeList(list1, list2, list3);
 	var closure = new ajlisp.Closure(null, ajlisp.environment, body);
 	

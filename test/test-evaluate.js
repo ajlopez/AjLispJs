@@ -1,5 +1,6 @@
 
 var ajlisp = require('../lib/ajlisp'),
+    atoms = require('../lib/atoms'),
     lists = require('../lib/lists'),
     functions = require('../lib/functions');
 
@@ -56,7 +57,7 @@ exports['Rest Form Evaluate'] = function(test) {
 };
 
 exports['Define Form Evaluate'] = function(test) {
-	var list = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
+	var list = lists.makeList(ajlisp.environment.define, atoms.createAtom("one"), 1);
 	
 	test.equal(list.evaluate(ajlisp.environment), 1);
 	test.equal(ajlisp.environment.one, 1);
@@ -65,9 +66,9 @@ exports['Define Form Evaluate'] = function(test) {
 };
 
 exports['Do Form Evaluate'] = function(test) {
-	var list1 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), 1);
-	var list2 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), 2);
-	var list3 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), 3);
+	var list1 = lists.makeList(ajlisp.environment.define, atoms.createAtom("one"), 1);
+	var list2 = lists.makeList(ajlisp.environment.define, atoms.createAtom("two"), 2);
+	var list3 = lists.makeList(ajlisp.environment.define, atoms.createAtom("three"), 3);
 	var list = lists.makeList(ajlisp.environment['do'], list1, list2, list3);
 	
 	test.equal(list.evaluate(ajlisp.environment), 3);
@@ -79,11 +80,11 @@ exports['Do Form Evaluate'] = function(test) {
 };
 
 exports['Closure Form Evaluate with Parameters'] = function(test) {
-	var list1 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("one"), new ajlisp.Atom("a"));
-	var list2 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("two"), new ajlisp.Atom("b"));
-	var list3 = lists.makeList(ajlisp.environment.define, new ajlisp.Atom("three"), new ajlisp.Atom("c"));
+	var list1 = lists.makeList(ajlisp.environment.define, atoms.createAtom("one"), atoms.createAtom("a"));
+	var list2 = lists.makeList(ajlisp.environment.define, atoms.createAtom("two"), atoms.createAtom("b"));
+	var list3 = lists.makeList(ajlisp.environment.define, atoms.createAtom("three"), atoms.createAtom("c"));
 	var body = lists.makeList(list1, list2, list3);
-	var names = lists.makeList(new ajlisp.Atom("a"), new ajlisp.Atom("b"), new ajlisp.Atom("c"));
+	var names = lists.makeList(atoms.createAtom("a"), atoms.createAtom("b"), atoms.createAtom("c"));
 	var closure = new ajlisp.Closure(names, ajlisp.environment, body);
 	var list = lists.makeList(closure,1,2,3);
 	
