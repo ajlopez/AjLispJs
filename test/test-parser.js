@@ -1,8 +1,8 @@
 
-var ajlisp = require('../lib/ajlisp');
+var parsers = require('../lib/parsers');
 
 exports['Parse Integer'] = function(test) {
-	var parser = ajlisp.createParser("123");
+	var parser = parsers.createParser("123");
 
 	var expr = parser.parse();
 	
@@ -13,7 +13,7 @@ exports['Parse Integer'] = function(test) {
 }
 
 exports['Parse String'] = function(test) {
-	var parser = ajlisp.createParser('"foo"');
+	var parser = parsers.createParser('"foo"');
 
 	var expr = parser.parse();
 	
@@ -24,7 +24,7 @@ exports['Parse String'] = function(test) {
 }
 
 exports['Parse Atom'] = function(test) {
-	var parser = ajlisp.createParser('a');
+	var parser = parsers.createParser('a');
 
 	var expr = parser.parse();
 	
@@ -36,7 +36,7 @@ exports['Parse Atom'] = function(test) {
 }
 
 exports['Parse Dotted Atom'] = function(test) {
-    var parser = ajlisp.createParser('.parseInt');
+    var parser = parsers.createParser('.parseInt');
     
 	var expr = parser.parse();
 	
@@ -48,7 +48,7 @@ exports['Parse Dotted Atom'] = function(test) {
 }
 
 exports['Parse List'] = function(test) {
-	var parser = ajlisp.createParser('(1 2 3)');
+	var parser = parsers.createParser('(1 2 3)');
 
 	var expr = parser.parse();
 	
